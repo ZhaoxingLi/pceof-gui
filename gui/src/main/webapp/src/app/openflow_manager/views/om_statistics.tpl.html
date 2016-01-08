@@ -1,0 +1,109 @@
+<!-- <ofstats data="portStatistics" data-type="'port statistics'"></ofstats> -->
+<div ng-controller="statisticsCtrl">
+    <div class="statsSelectBoxes">
+        <div class="col-md-2 form-group">
+            <label class="sectionTitle">{{ 'OM_STATS' | translate }}</label>
+            <select class="form-control col-md-2" ng-model="stats" ng-change="changeTplType()" ng-options="stat.name for stat in statisticsObj">
+                <option>-</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 form-group" ng-show="stats.subStatistics.length">
+            <label>{{ 'OM_TYPE' | translate }}</label>
+            <select class="form-control col-md-2" ng-model="subStats" ng-change="getStatsData()"   ng-options="substat.name for substat in stats.subStatistics">
+                <option>-</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 form-group" ng-show="stats.type === 'LINK'">
+            <label>Registration</label>
+            <select class="form-control col-md-2" ng-model="linkStatObj['registration-id']" 
+                    ng-options="registration['registration-id'] as registration['registration-id'] for registration in linkStatRegistrations">
+                <option>-</option>
+            </select>
+        </div>
+
+        <div class="col-md-1 form-group" ng-show="stats.type === 'LINK'">
+            <label>Window</label>
+            <input class="form-control col-md-1" ng-model="linkStatObj['window']" type="number" />
+        </div>
+
+        <div class="col-md-2 form-group" ng-show="stats.type === 'LINK'">
+            <label>Response type</label>
+            <select class="form-control col-md-2" ng-model="linkStatObj['response-type']" ng-change=""   ng-options="responseType as responseType for responseType in linkStatResponseTypes">
+                <option>-</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 form-group" ng-show="stats.type === 'LINK'">
+            <label>Response units</label>
+            <select class="form-control col-md-2" ng-model="linkStatObj['response-units']" ng-change=""   ng-options="responseUnit as responseUnit for responseUnit in linkStatResponseUnits">
+                <option>-</option>
+            </select>
+        </div>
+
+        <div class="col-md-1 form-group" ng-show="stats.type === 'LINK'">
+            <label>Orig. samples</label>
+            <input type="checkbox"  ng-model="linkStatObj['original-samples']" />
+        </div>
+        <!-- <div class="col-md-2" ng-hide="stats.name !== 'Ports statistics' && !subStats.name">
+            <label>{{ 'OM_DEVICE' | translate }}</label>
+            <select class="form-control input-sm col-md-2" ng-model="selectedDev" ng-change="getStatsData()" ng-options="dev.id for dev in selectedDevicesList | filter: dev.id.indexOf('config') === -1 ">
+                <option>-</option>
+            </select>
+        </div> -->
+
+        <div class="col-md-2" ng-hide="status.isWorking || (!stats && !stats.subStatistics.length) || (stats && stats.subStatistics.length && !subStats)">
+            <button class="btn btn-primary refresh-stats" ng-click="getStatsData()" tooltip="{{'OF_REFRESH_ST_DATA_TT' | translate}}">{{ 'OF_REFRESH_DATA' | translate }}</button>
+        </div>
+
+        <div class="clear"></div>
+
+        <div ng-show="stats.type != 'LINK'" class="devList col-sm-12" ng-show="selectedDevicesList.length && !((!stats && !stats.subStatistics.length) || (stats && stats.subStatistics.length && !subStats))">
+            <label>{{ 'OM_DEVICE' | translate }}:</label>
+            <div class="clear"></div>
+
+            <div class="row col-sm-3" ng-repeat="dev in selectedDevicesList ">
+                <label><input type="checkbox" ng-click="toggleCheckedDev(dev)" ng-checked="dev.checkedStats"/>{{ getNodeByDataPath(dev.id)['node-id'] || dev.id }}</label>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+        
+    </div>
+
+    <h3 ng-show="linkStatData.summary.value && stats.type === 'LINK'">Summary</h3>
+    <table class="table dataTable" ng-show="linkStatData.summary.value && stats.type === 'LINK'">
+        <thead>
+            <tr>
+                <th ng-show="linkStatData.summary.value.length">Link id</th>
+                <th ng-hide="linkStatData.summary.value.length"></th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody ng-show="linkStatData.summary.value.length">
+            <tr ng-repeat="valueRow in linkStatData.summary.value">   
+                <td>{{valueRow['link-id']}}</td>
+                <td>{{valueRow.value}}</td>
+            </tr>
+        </tbody>
+        <tbody ng-hide="linkStatData.summary.value.length">
+            <tr>   
+                <td>Aggregate stats for: {{linkStatObj['response-units']}}</td>
+                <td>{{linkStatData.value}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 ng-show="linkStatData['original-samples'].length > 0 && stats.type === 'LINK' ">Original samples</h3>
+
+    
+    <!-- TODO: table stats -->
+    <table-stats ng-hide="status.isWorking || (!stats && !stats.subStatistics.length) || (stats && stats.subStatistics.length && !subStats) || (stats.type === 'LINK' && !linkStatData['original-samples'].length)" graph-table-data="graphTableData" custom-func="updateDataFunc" table-type="tableType"></table-stats>
+
+    <alert type="{{status.type}}" ng-show="status.msg" class="stats_alert"><i ng-show="status.isWorking" class="icon-refresh icon-spin"></i><b> {{status.msg | translate }} </b></alert>
+
+    <div class="actionButtons">
+        <button type="button" class="btn btn-primary" ng-click="toggleExpanded('statisticsPopup')" tooltip="{{'OF_BACK_ST_TT' | translate}}">{{'OF_BUTTON_BACK' | translate}}</button>
+    </div>
+</div>

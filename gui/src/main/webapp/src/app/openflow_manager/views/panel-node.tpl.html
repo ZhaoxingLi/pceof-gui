@@ -1,0 +1,80 @@
+<div class="node-panel">
+	<div ng-show="nodePanel.overview">
+		<h3>Nodes Overview</h3>
+		<div class="panel-group height-10">
+			<div ng-repeat="node in topologyData.nodes">
+				<div id="node-panel-item-{{node.id}}">
+					<div class="panel-item" ng-mouseover="highlightNode(node.id)" ng-click="openNodeDetails(node)">
+						<span class="title"><i class="fa fa-circle {{node.status}}" tooltip="Status: {{node.status}}"></i> {{node['node-id']}}</span><span class="policy-details">{{node.type}}</span><br/>
+						<span>{{node['datapath-type']}}</span><span class="policy-details">{{node['bridge-name']}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-show="nodePanel.nodeDetails">
+		<h3>Node Details</h3>
+		<div class="panel-item-static">
+			<div class="panel-item-back-icon" ng-click="backToNodesList()" tooltip="Back to Nodes Overview"><i class="fa fa-arrow-left"></i></div>
+			<span class="panel-item-static-title"><i class="fa fa-circle {{currentNode['status']}}" tooltip="Status: {{currentNode['status']}}"></i> {{currentNode['node-id']}}</span><br/>
+		</div>
+		<div class="panel-item-static selected" style="margin-top: -1px;">
+			<span><b>Status:</b></span><span class="policy-details">{{currentNode['status']}}</span><br/>
+			<span><b>Type:</b></span><span class="policy-details">{{currentNode['type']}}</span><br/>
+			<span ng-show="currentNode.hasOwnProperty('datapath-id')"><span><b>Data Path ID:</b></span><span class="policy-details"> {{ currentNode['datapath-id'] }}</span><br/></span>
+			<span ng-show="currentNode.hasOwnProperty('datapath-type')"><span><b>Data Path Type:</b></span><span class="policy-details"> {{ currentNode['datapath-type'] }}</span><br/></span>
+		</div>
+
+		<div ng-show="currentNode.type === 'host'">
+			<h4>Subnets ( {{ currentNode['subnet'].length }} )</h4>
+			<div class="panel-group height-180">
+				<div ng-repeat="subnet in currentNode['subnet']">
+					<div class="panel-item">
+						<span class="title">{{ subnet }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<h4>Ports ( {{ currentNode['tp'].length }} )</h4>
+		<div class="panel-group height-180">
+			<div ng-repeat="port in currentNode['tp']">
+				<div class="panel-item" id="node-panel-tp-{{port['tp-id']}}" ng-mouseover="highlightLinkByPort(port,currentNode)" ng-mouseleave="highlightNode(currentNode.id)" ng-click="openTPDetails(port)">
+					<span class="title"><span ng-show="port.hasOwnProperty('ofl3-topology:status')"><i class="fa fa-circle {{ port['ofl3-topology:status'] }}" tooltip="Status: {{port['ofl3-topology:status']}}"></i></span> {{port['tp-id']}} <span class="gray-text">({{ formatBandwidth(port['ofl3-topology:max-bandwidth']) }})</span></span>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+	<div ng-show="nodePanel.tpDetails">
+		<h3>Port Details</h3>
+		<div class="panel-item-static">
+			<div class="panel-item-back-icon" ng-click="openNodeDetails(currentNode)" tooltip="Back to Node Details"><i class="fa fa-arrow-left"></i></div>
+			<span class="panel-item-static-title"><span ng-show="currentTP.hasOwnProperty('ofl3-topology:status')"><i class="fa fa-circle {{ currentTP['ofl3-topology:status'] }}" tooltip="Status: {{currentTP['ofl3-topology:status']}}"></i></span> {{currentTP['tp-id']}}</span><br/>
+		</div>
+		<div class="panel-item-static selected" style="margin-top: -1px;">
+			<span><b>Status:</b></span><span class="policy-details">{{ currentTP['ofl3-topology:status'] ? currentTP['ofl3-topology:status'] : 'N/A' }}</span><br/>
+			<span ng-show="currentTP.hasOwnProperty('ofl3-topology:vlan-id')"><span><b>VLAN ID:</b></span><span class="policy-details"> {{ currentTP['ofl3-topology:vlan-id'] == 1 ? 'Unassigned' : currentTP['ofl3-topology:vlan-id'] }}</span><br/></span>
+			<span ng-show="currentTP.hasOwnProperty('ofl3-topology:max-bandwidth')"><span><b>Max Bandwidth:</b></span><span class="policy-details">{{ formatBandwidth(currentTP['ofl3-topology:max-bandwidth']) }}</span><br/></span>
+			<span ng-show="currentTP.hasOwnProperty('ofl3-topology:mac-address')"><span><b>MAC:</b></span><span class="policy-details">{{ currentTP['ofl3-topology:mac-address'] }}</span><br/></span>
+			<span ng-show="currentTP.hasOwnProperty('ofl3-topology:port-id')"><span><b>Port ID:</b></span><span class="policy-details"> {{ currentTP['ofl3-topology:port-id'] }}</span><br></span>
+			<span ng-show="currentTP.hasOwnProperty('ofl3-topology:admin-cost')"><span><b>Cost:</b></span><span class="policy-details"> {{ currentTP['ofl3-topology:admin-cost'] }}</span></span>
+		</div>
+
+		<div ng-show="currentTP.hasOwnProperty('ofl3-topology:ip-address')">
+			<h4>IP addresses ( {{ currentTP['ofl3-topology:ip-address'].length }} )</h4>
+			<div class="panel-group height-180">
+				<div ng-repeat="ip in currentTP['ofl3-topology:ip-address']">
+					<div class="panel-item" id="node-panel-ip-{{ip}}">
+						<span class="title">{{ip}}</span></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
