@@ -1,9 +1,25 @@
-# PCEOF GUI
-## Description and launching
-GUI of Path Computation Element.
+# PCE-OF GUI
+## Overview
+User interface of Path Computation Element with OpenFlow.
 
-The app is static and adapted for standalone use. Run /gui/src/main/webapp/index.html in your browser (Chrome recommended).
+This is GUI only version. The backend interface to spin up soon.
+
+## Screenshots
+
+![](https://github.com/CiscoDevNet/pceof-gui/blob/screenshots/topology-active.png)
+*Figure 1. Topology screen*
+
+![](https://github.com/CiscoDevNet/pceof-gui/blob/screenshots/operational-policy-path.png)
+*Figure 2. Path over topology*
+
+![](https://github.com/CiscoDevNet/pceof-gui/blob/screenshots/flow-management.png)
+*Figure 3. Flow management*
+
 ## Credits
-* OpenFlow Manager (OFM) team, [AngularJS](https://github.com/angular/angular.js) team, [NeXt UI](https://github.com/CiscoDevNet/next-ui) team
-* [Alexei Zverev](https://github.com/zverevalexei) (alzverev@cisco.com)
 * [Daniel Malachovsky](https://github.com/malachovsky) (dmalacho@cisco.com)
+* [Alexei Zverev](https://github.com/zverevalexei) (alzverev@cisco.com)
+* Daniel Kuzma (dakuzma@cisco.com)
+* [Stanislav Jamrich](https://github.com/sjamrich) (sjamrich@cisco.com)
+* Zdenko Krnac (zkrnac@cisco.com)
+* [Martin Lakatos](https://github.com/m16peter)
+* [NeXt UI](https://github.com/OpenDaylight/next) team, [AngularJS](https://github.com/angular/angular.js) team, [Angular Material](https://github.com/angular/material)
