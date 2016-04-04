@@ -6,13 +6,13 @@ This is GUI only version. The backend interface to spin up soon.
 
 ## Screenshots
 
-![](https://github.com/CiscoDevNet/pceof-gui/blob/screenshots/topology-active.png)
+![](https://raw.githubusercontent.com/CiscoDevNet/pceof-gui/master/screenshots/topology-active.png)
 *Figure 1. Topology screen*
 
-![](https://github.com/CiscoDevNet/pceof-gui/blob/screenshots/operational-policy-path.png)
+![](https://raw.githubusercontent.com/CiscoDevNet/pceof-gui/master/screenshots/operational-policy-path.png)
 *Figure 2. Path over topology*
 
-![](https://github.com/CiscoDevNet/pceof-gui/blob/screenshots/flow-management.png)
+![](https://raw.githubusercontent.com/CiscoDevNet/pceof-gui/master/screenshots/flow-management.png)
 *Figure 3. Flow management*
 
 ## Credits
