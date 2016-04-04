@@ -1,0 +1,252 @@
+<md-dialog ng-cloak>
+    <form name="policyForm">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Add Policy</h2>
+                <span flex></span>
+                <md-button ng-click="closeDialog()" class="md-button">Close dialog</md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="width:600px; height:600px; ">
+            <md-tabs layout-fill>
+                <md-tab label="Policy Parameters">
+                    <div layout="column" class="layout-padding-lr15">
+                        <div layout="row">
+                            <md-input-container flex="50">
+                                <label>Policy ID</label>
+                                <input name="policyId" ng-model="policy.data['policy-id']" ng-required="true">
+                                <div ng-messages="policyForm.policyId.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Priority</label>
+                                <input name="priority" ng-model="policy.data.priority" ng-required="true">
+                                <div ng-messages="policyForm.priority.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-input-container class="md-block" flex>
+                                <label>Policy type</label>
+                                <md-select name="type" ng-model="policy.type"
+                                           aria-label="Policy type" ng-required="true">
+                                    <md-option ng-repeat="type in ['Element', 'Prefix', 'Segment', 'Tunnel']" value="{{type}}">
+                                        {{type}}
+                                    </md-option>
+                                </md-select>
+                                <div ng-messages="policyForm.type.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </md-tab>
+                <md-tab label="Flow specifications">
+                    <div layout="column" class="layout-padding-lr15">
+                        <div layout="row">
+                            <md-input-container flex="50" ng-if="policy.type !== 'Tunnel'">
+                                <label>Source Prefix</label>
+                                <input name="sourcePrefix" ng-model="policy.data['flow-spec'].source['ip-prefix']"
+                                        ng-required="true">
+                                <div ng-messages="policyForm.sourcePrefix.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                    <!--<div ng-message="pattern">Invalid format</div>-->
+                                </div>
+                            </md-input-container>
+
+                            <md-input-container flex="30" ng-if="policy.type === 'Tunnel'">
+                                <label>Source Node</label>
+                                <input name="sourceNode" ng-model="policy.data['flow-spec'].source['node-name']"
+                                       ng-required="true">
+                                <div ng-messages="policyForm.sourceNode.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                    <!--<div ng-message="pattern">Invalid format</div>-->
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex="20" ng-if="policy.type === 'Tunnel'">
+                                <label>Source Port</label>
+                                <input name="sourcePort" ng-model="policy.data['flow-spec'].source['tp-id']"
+                                       ng-required="true">
+                                <div ng-messages="policyForm.sourceNode.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                    <!--<div ng-message="pattern">Invalid format</div>-->
+                                </div>
+                            </md-input-container>
+
+                            <md-input-container flex>
+                                <label>Destination Prefix</label>
+                                <input name="destinationPrefix" ng-model="policy.data['flow-spec'].destination['ip-prefix']"
+                                        ng-required="true">
+                                <div ng-messages="policyForm.destinationPrefix.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                    <!--<div ng-message="pattern">Invalid format</div>-->
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <div class="flex-50 md-subheader md-primary">Source Port range</div>
+                            <div class="flex md-subheader md-primary">Destination Port range</div>
+                        </div>
+                        <div layout="row">
+                            <md-input-container flex-25>
+                                <label>Start Port</label>
+                                <input name="sourceStartPort" ng-model="policy.data['flow-spec']['source-port-range']['start-port']"
+                                       ng-required="policy.data['flow-spec']['source-port-range']['end-port']">
+                                <div ng-messages="policyForm.sourceStartPort.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex-25>
+                                <label>End Port</label>
+                                <input name="sourceEndPort" ng-model="policy.data['flow-spec']['source-port-range']['end-port']"
+                                       ng-required="policy.data['flow-spec']['source-port-range']['start-port']">
+                                <div ng-messages="policyForm.sourceEndPort.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex-25>
+                                <label>Start Port</label>
+                                <input name="destinationStartPort" ng-model="policy.data['flow-spec']['destination-port-range']['start-port']"
+                                       ng-required="policy.data['flow-spec']['source-port-range']['end-port']">
+                                <div ng-messages="policyForm.destinationStartPort.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex-25>
+                                <label>End Port</label>
+                                <input name="destinationEndPort" ng-model="policy.data['flow-spec']['destination-port-range']['end-port']"
+                                       ng-required="policy.data['flow-spec']['source-port-range']['start-port']">
+                                <div ng-messages="policyForm.destinationEndPort.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-input-container class="md-block" flex="50">
+                                <label>Kind</label>
+                                <md-select name="kind" ng-model="policy.data['flow-attributes'].kind"
+                                           aria-label="Flow attributes, property kind" ng-required="true">
+                                    <md-option ng-repeat="kind in ['unidirectional', 'bi-directional']" value="{{kind}}">
+                                        {{kind}}
+                                    </md-option>
+                                </md-select>
+                                <div ng-messages="policyForm.kind.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>IP Protocol</label>
+                                <input name="ipProtocol" ng-model="policy.data['flow-spec']['ip-protocol']">
+                            </md-input-container>
+                        </div>
+
+                        <div layout="row">
+                            <md-input-container flex="50">
+                                <label>Traffic Priority</label>
+                                <input ng-model="policy.data['flow-attributes']['traffic-priority']">
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Bandwidth Limit</label>
+                                <input ng-model="policy.data['flow-attributes']['bandwidth-limit']">
+                            </md-input-container>
+                        </div>
+                    </div>
+                </md-tab>
+                <md-tab label="Path Bundles">
+                    <div layout="column" class="layout-padding-lr15">
+                        <div layout="row">
+                            <md-input-container flex="50">
+                                <label>Bundle Id</label>
+                                <input name="bundleId" ng-model="pathBundle.data['bundle-id']"
+                                       ng-required="!policy.data['path-bundle'].data.length">
+                                <div ng-messages="policyForm.bundleId.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+
+                            <md-input-container flex>
+                                <label>Default Use</label>
+                                <md-select name="defaultUse" ng-model="pathBundle.data['constraints']['default-use']"
+                                           aria-label="Path bundle, property default-use"
+                                           ng-required="!policy.data['path-bundle'].data.length">
+                                    <md-option ng-repeat="defaultuse in ['must-use', 'must-not-use', 'may-use']" value="{{defaultuse}}">
+                                        {{defaultuse}}
+                                    </md-option>
+                                </md-select>
+                                <div ng-messages="policyForm.defaultUse.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-input-container flex="50">
+                                <label>Max Path Cost</label>
+                                <input name="maxPathCost" ng-model="pathBundle.data['constraints']['max-path-cost']"
+                                       ng-required="!policy.data['path-bundle'].data.length">
+                                <div ng-messages="policyForm.maxPathCost.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Role</label>
+                                <md-select name="role" ng-model="pathBundle.data.role"
+                                           aria-label="Path bundle, property role"
+                                           ng-required="!policy.data['path-bundle'].data.length">
+                                    <md-option ng-repeat="role in ['active', 'backup']" value="{{role}}">
+                                        {{role}}
+                                    </md-option>
+                                </md-select>
+                                <div ng-messages="policyForm.role.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-input-container flex>
+                                <label>Active Path Bundle Id</label>
+                                <input name="activePathBundleId" ng-model="pathBundle.data['active-bundle-id']"
+                                       ng-required="pathBundle.data.role === 'backup'">
+                                <div ng-messages="policyForm.activePathBundleId.$error" md-auto-hide="false">
+                                    <div ng-message="required">Required field</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <span flex></span>
+                            <md-button ng-click="addPathBundleToList()">
+                                Add to list
+                            </md-button>
+                        </div>
+                    </div>
+                    <md-subheader class="md-primary">Path Bundle List</md-subheader>
+                    <md-list>
+                        <md-list-item class="md-2-line" layout="row" ng-repeat="pb in policy.data['path-bundle'].data track by $index"
+                                      ng-click="fillPathBundleForm(pb, $index)">
+                            <div class="md-list-item-text" flex>
+                                <h3>{{pb.data['bundle-id']}} </h3>
+                                <p>Role: {{ pb.data.role}} </p>
+                            </div>
+                            <div>
+                                <md-icon aria-label="Delete path bundle"
+                                           ng-click="deletePathBundleFromList($index)">
+                                    <i class="material-icons">clear</i>
+                                </md-icon>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </md-tab>
+            </md-tabs>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="closeDialog()">
+                Close
+            </md-button>
+            <md-button ng-click="saveData()" style="margin-right:20px;" ng-disabled="!policy.data['path-bundle'].data.length || policyForm.$invalid">
+                Save
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

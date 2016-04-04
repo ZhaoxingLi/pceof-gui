@@ -1,0 +1,34 @@
+<div layout="row" class="h100 pce-wrapper" flex>
+    <section flex layout='column' class="h100">
+        <md-toolbar class="toolbar">
+            <div class="md-toolbar-tools">
+                <span class="product-label">PCE</span>
+                <md-button class="md-primary menu-button" ng-href="#/pce/topology"><i class="material-icons top-menu-icon">usb</i> Topology</md-button>
+                <md-button class="md-primary menu-button" ng-href="#/pce/flow-management"><i class="material-icons top-menu-icon">tune</i> Flows</md-button>
+                <md-button class="md-primary menu-button" ng-href="#/pce/statistics"><i class="material-icons top-menu-icon">equalizer</i> Statistics</md-button>
+                <md-button class="md-primary menu-button" ng-href="#/pce/notifications"><i class="material-icons top-menu-icon">notifications</i> Registrations</md-button>
+                <md-button class="md-primary menu-button" ng-href="#/pce/configuration"><i class="material-icons top-menu-icon">settings</i> Configuration</md-button>
+                <md-button class="md-primary menu-button" ng-href="#/pce/bgp-routes"><i class="material-icons top-menu-icon">timeline</i> BGP routes</md-button>
+                <span flex></span>
+                <md-button ng-if="page === 'topology'" class="md-primary menu-button"
+                           ng-click="openSidePanel('side_panel_nodes')">
+                    <i class="material-icons top-menu-icon">device_hub</i> Nodes
+                </md-button>
+                <md-button ng-if="page === 'topology'" class="md-primary menu-button"
+                           ng-click="openSidePanel('side_panel_links')">
+                    <i class="material-icons top-menu-icon">trending_flat</i> Connections
+                </md-button>
+                <md-button ng-if="page === 'topology'" class="md-primary menu-button"
+                           ng-click="openSidePanel('policy/side_panel_policy')">
+                    <i class="material-icons top-menu-icon">wrap_text</i> Policy
+                </md-button>
+            </div>
+            <md-progress-linear ng-if="showProgressLine" md-mode="indeterminate"></md-progress-linear>
+        </md-toolbar>
+        <div class="content-wrapper">
+            <section layout="row" class="h100" ng-include="'app/modules/pce/views/'+page+'.tpl.html'"></section>
+        </div>
+    </section>
+
+    <section ng-if="sidePanelPage" layout="row" class="h100" ng-include="'app/modules/pce/views/'+sidePanelPage+'.tpl.html'">
+</div>

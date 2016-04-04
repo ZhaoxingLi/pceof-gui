@@ -1,8 +1,0 @@
-<div ng-controller="devSelectorCtrl" class="form-group">
-    <!-- DEVICE -->
-    <span class="sectionTitle">{{'OF_DEV' | translate }}</h3>
-    <select ng-show="selFlow.mod === 0 && !onlyInOperational(selFlow)" class="form-control" style="width:300px" ng-change="setDeviceAndSelectProperties(selDevice); checkDuplicity('device');" ng-model="selDevice" ng-options="getNodeByDataPath(d.id)['node-id'] for d in selectedDevicesList">
-        <option value="">-</option>
-    </select>
-    <span ng-if="selFlow.mod === 1 || onlyInOperational(selFlow)"><strong>{{' ' + getNodeByDataPath(selFlow.device)['node-id']}}</strong></span>
-</div>

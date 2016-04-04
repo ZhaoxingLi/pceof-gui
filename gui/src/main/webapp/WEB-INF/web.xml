@@ -3,11 +3,11 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://java.sun.com/xml/ns/javaee"
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-        id="WebApp_ID" version="3.0">
+        id="PCE" version="3.0">
  
-    <display-name>Welcome Page</display-name>
+    <display-name>PCE Openflow</display-name>
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>build/index.html</welcome-file>
     </welcome-file-list>
      
     <servlet-mapping>
