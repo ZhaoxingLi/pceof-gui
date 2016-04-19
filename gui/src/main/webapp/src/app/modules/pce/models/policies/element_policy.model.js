@@ -10,6 +10,7 @@ define([], function () {
         function ElementPolicy (){
             self = this;
             this.data = {};
+            this.pathBundleId = null;
         }
 
         ElementPolicy.prototype.setData = setData;
@@ -22,10 +23,12 @@ define([], function () {
          * extends ElementPolicy prototype
          * @param elementPolicyData
          */
-        function setData (elementPolicyData){
+        function setData (elementPolicyData, pathBundleId){
             self.data.id = elementPolicyData.id;
             self.data['element-type'] = elementPolicyData['element-type'];
             self.data['use-override'] = elementPolicyData['use-override'];
+
+            self.pathBundleId = pathBundleId;
         }
 
         return ElementPolicy;

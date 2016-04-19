@@ -24,9 +24,15 @@ define([], function () {
 			/*jshint validthis:true */
 			var self = this;
 
-			registrationListData.forEach(function(registrationData) {
-				self.data.push(RegistrationService.createRegistration(registrationData));
-			});
+			self.data = [];
+
+			// if the array is not empty (when no registrations)
+			if(registrationListData){
+				registrationListData.forEach(function(registrationData) {
+					self.data.push(RegistrationService.createRegistration(registrationData));
+				});
+			}
+
 		}
 
 		return RegistrationList;

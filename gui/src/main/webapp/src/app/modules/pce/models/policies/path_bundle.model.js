@@ -27,6 +27,7 @@ define([], function () {
          * Sets "expanded" property to false
          */
         function collapse() {
+            /*jshint validthis:true */
             this.expanded = false;
         }
 
@@ -34,6 +35,7 @@ define([], function () {
          * Sets "expanded" property to true
          */
         function expand() {
+            /*jshint validthis:true */
             this.expanded = true;
         }
 
@@ -55,11 +57,11 @@ define([], function () {
             }
 
             if(pathBundleData.constraints['segment-policy']) {
-                self.data.constraints['segment-policy'] = setSegmentPolicyListData(pathBundleData.constraints['segment-policy']);
+                self.data.constraints['segment-policy'] = setSegmentPolicyListData(pathBundleData.constraints['segment-policy'], pathBundleData['bundle-id']);
             }
 
             if(pathBundleData.constraints['element-policy']) {
-                self.data.constraints['element-policy'] = setElementPolicyListData(pathBundleData.constraints['element-policy']);
+                self.data.constraints['element-policy'] = setElementPolicyListData(pathBundleData.constraints['element-policy'], pathBundleData['bundle-id']);
             }
 
             function setPathListData(pathListData) {
@@ -70,18 +72,18 @@ define([], function () {
                 return pathList;
             }
 
-            function setSegmentPolicyListData(segmentPolicyListData) {
+            function setSegmentPolicyListData(segmentPolicyListData, pathBundleId) {
                 var segmentPolicyList = SegmentPolicyListService.createSegmentPolicyList();
 
-                segmentPolicyList.setData(segmentPolicyListData);
+                segmentPolicyList.setData(segmentPolicyListData, pathBundleId);
 
                 return segmentPolicyList;
             }
 
-            function setElementPolicyListData(elementPolicyListData) {
+            function setElementPolicyListData(elementPolicyListData, pathBundleId) {
                 var elementPolicyList = ElementPolicyListService.createElementPolicyList();
 
-                elementPolicyList.setData(elementPolicyListData);
+                elementPolicyList.setData(elementPolicyListData, pathBundleId);
 
                 return elementPolicyList;
             }
@@ -91,6 +93,7 @@ define([], function () {
          * Toggles "expanded" property
          */
         function toggleExpanded() {
+            /*jshint validthis:true */
             this.expanded = !this.expanded;
         }
 

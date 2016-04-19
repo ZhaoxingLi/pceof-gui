@@ -44,8 +44,9 @@
                           <th md-column><span>Flows in config+operational</span></th>
                       </tr>
                     </thead>
-                    <tbody md-body ng-repeat="device in devices | filter: query.filter | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit" ng-init="showFlows = false">
-                        <tr md-row>
+                    <!--, datapathType: query.filter, configFlowsCount: query.filter, operationalFlowsCount: query.filter, confAndOperFlowsCount: query.filter-->
+                    <tbody md-body >
+                        <tr md-row ng-repeat-start="device in devices | filter: query.filter | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit" ng-init="showFlows = false">
                             <td md-cell>
                                 <button class="md-icon-button md-button md-ink-ripple" type="button" ng-click="showFlows = !showFlows">
                                     <md-icon class="material-icons rotate {{ showFlows ? 'down' : '' }}">keyboard_arrow_right</md-icon>
@@ -55,12 +56,12 @@
                             </td>
                             <td md-cell>{{ device.status }}</td>
                             <td md-cell>{{ device.datapathType }}</td>
-                            <td md-cell>{{ getCountFlow('config', device.datapathId) }}</td>
-                            <td md-cell>{{ getCountFlow('operational', device.datapathId) }}</td>
-                            <td md-cell>{{ getCountFlow('config + operational', device.datapathId) }}</td>
+                            <td md-cell>{{ device.configFlowsCount }}</td>
+                            <td md-cell>{{ device.operationalFlowsCount }}</td>
+                            <td md-cell>{{ device.confAndOperFlowsCount }}</td>
                         </tr>
 
-                        <tr md-row ng-show="showFlows">
+                        <tr md-row ng-repeat-end ng-show="showFlows">
                             <td md-cell colspan="6">
                                 <div layout-padding class="mt20 mb20">
                                     <md-content ng-controller="FlowsTableCtrl" flex class="md-whiteframe-2dp">
@@ -118,7 +119,7 @@
                 </table>
             </md-table-container>
 
-            <!--<md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{ devices.length }}" md-options="[1,2,5,10]" md-page-select="options.pageSelector" md-boundary-links="options.boundaryLinks"></md-table-pagination>-->
+            <md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{ devices.length }}" md-options="[25,50,100]" md-page-select="options.pageSelector" md-boundary-links="options.boundaryLinks"></md-table-pagination>
         </md-content>
     </section>
 </div>

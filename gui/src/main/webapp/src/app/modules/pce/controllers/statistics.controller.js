@@ -111,6 +111,7 @@ define([], function () {
                     dialogShown = false;
                 }, function() {
                     dialogShown = false;
+                    $scope.hideProgressBar();
                 });
             }
         }
@@ -127,7 +128,6 @@ define([], function () {
                     rawData = data;
                     $scope.devicesList = devices;
                     StatisticsService.updateDeviceNames(rawData, $scope.devicesList);
-                    $scope.selectedStatistics.main = $scope.statsConfig.list[0];
                     $scope.hideProgressBar();
                     $scope.firstLoading = false;
                 },
@@ -146,7 +146,7 @@ define([], function () {
 
             if ( $scope.selectedStatistics.main.subFunct ){
 
-                $scope.table.data = StatisticsService.updateDataValue(StatisticsService[$scope.selectedStatistics.main.subFunct](rawData, $scope.selectedStatistics.main));
+                $scope.table.data = StatisticsService.updateDataValue(StatisticsService[$scope.selectedStatistics.main.subFunct](rawData ? rawData : [], $scope.selectedStatistics.main));
                 $scope.table.columns = StatisticsService.getTableColumns($scope.table.data);
                 updateStatisticsData();
 
@@ -160,7 +160,7 @@ define([], function () {
          * Table statistics - general method for updating
          */
         function updateTableStatistics(){
-            var tableStatsData = StatisticsService.tableStatisticsByNodes(rawData);
+            var tableStatsData = StatisticsService.tableStatisticsByNodes(rawData ? rawData : []);
             //console.info('INFO :: table statistics raw data - ', tableStatsData);
 
             if ( $scope.selectedStatistics.sub ) {
@@ -224,9 +224,16 @@ define([], function () {
                     if ( data && data.length ){
                         $scope.linkStatisticsSetup['registration-id'] = data[0];
                     }
+
+                    $scope.selectedStatistics.main = $scope.statsConfig.list[0];
+                    $scope.hideProgressBar();
+
                 },
                 function() {
                     console.warn('WARNING :: error or no registration data found');
+                    $scope.selectedStatistics.main = $scope.statsConfig.list[0];
+                    $scope.hideProgressBar();
+                    $scope.openDialog();
                 }
             );
         }
@@ -277,6 +284,7 @@ define([], function () {
          * Watcher for selected statistics
          */
         $scope.$watch('selectedStatistics.main', function (newVal, oldVal) {
+            clearTableData();
             $scope.updateStatistics();
             $scope.sType = newVal ? newVal.template : null;
 

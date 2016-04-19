@@ -35,7 +35,7 @@ define([''], function () {
                 tps = $scope.networkObj.getAllTerminationPoints();
 
             // set all bgp routes for all termination points in network object
-            bgpRoutesList.getBGPRoutesList().then(function(){tps.map(setBGPRoutesToTP)});
+            bgpRoutesList.getBGPRoutesList().then(function(){tps.map(setBGPRoutesToTP);});
 
             function setBGPRoutesToTP(tpObj){
                 if(tpObj.data.hasOwnProperty('ofl3-topology:ip-address')){
@@ -84,6 +84,15 @@ define([''], function () {
                 NextTopologyService.fadeOutAllLayers($scope.nxTopology);
             }
         }
+
+        /**
+         * Watcher for selecting selected node another ctrl
+         */
+        $scope.$on('SELECT_NODE',function (e, newVal, oldVal) {
+            var nodeLabel = newVal._model._data.label;
+            //console.log('SELECT_NODE', newVal, nodeLabel);
+            $scope.selectNode(NodesService.findNodeByLabel($scope.networkData.node, nodeLabel));
+        });
 
     }
 

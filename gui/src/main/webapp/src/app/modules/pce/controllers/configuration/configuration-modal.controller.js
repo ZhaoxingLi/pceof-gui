@@ -9,6 +9,7 @@ define(['lodash'], function () {
 
         $scope.modalPath = 'app/modules/pce/views/modals/config-parts/';
         $scope.type = data.type;
+        $scope.configMethod = data.method;
         $scope.config = _.cloneDeep(data.config);
         $scope.showProgressBar = false;
 
@@ -16,9 +17,9 @@ define(['lodash'], function () {
         $scope.closeDialog = closeDialog;
         $scope.saveData = saveData;
 
-        function saveData(){
+        function saveData(type){//NeighbourDiscovery
             $scope.showProgressBar = true;
-            ConfigurationService.putNeighbourDiscovery($scope.config, function(){
+            ConfigurationService['put'+type]($scope.config, function(){
                 $scope.showProgressBar = false;
                 $mdDialog.hide($scope.config);
             },function (err) {

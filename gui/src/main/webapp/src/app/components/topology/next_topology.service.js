@@ -26,9 +26,6 @@ define(['next-ui'], function () {
                             width: function (model, link) {
                                 return model._data.gLinks.length > 2 ? 5 : 3;
                             },
-                            color: function (model, link) {
-                                return link.getColor();
-                            },
                             linkType: 'curve'
                         },
                         tooltipManagerConfig: {
@@ -51,9 +48,8 @@ define(['next-ui'], function () {
          * @param topoColors
          * @returns {*}
          */
-        this.getLinkColor = function (model, topoColors) {
-            var color = null,
-                status = model._data.status;
+        this.getLinkColor = function (status, topoColors) {
+            var color = null;
 
             if ( status ) {
                 // all links are operational

@@ -13,11 +13,11 @@ define([], function () {
          * @param segmentPolicyData {Object} Data for one SegmentPolicy object
          * @returns {Object} SegmentPolicy object with service methods
          */
-        function createSegmentPolicy (segmentPolicyData) {
+        function createSegmentPolicy (segmentPolicyData, pathBundleId) {
             var obj = new SegmentPolicyModel();
 
             if(segmentPolicyData) {
-                obj.setData(segmentPolicyData);
+                obj.setData(segmentPolicyData, pathBundleId);
             }
 
             return obj;

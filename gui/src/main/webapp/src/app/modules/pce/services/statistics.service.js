@@ -672,7 +672,7 @@ define(['lodash'], function () {
          * @param successCbk
          */
         function getStatisticsConfig(successCbk) {
-            var config = Restangular.oneUrl('statsConfig','/app/modules/pce/data/statistics.json');
+            var config = Restangular.oneUrl('statsConfig','./app/modules/pce/data/statistics.json');
             config.get().then(function (response) {
                 if ( response ) {
                     //console.info('INFO :: statistics config file', response);

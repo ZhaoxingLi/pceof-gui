@@ -73,8 +73,8 @@
                         <div layout="row" class="layout-padding-lr15" ng-if="selectedObjects.policy.data['flow-spec'].source['ip-prefix']">
                             <span flex="50"><strong>Source prefix</strong></span><span flex>{{selectedObjects.policy.data['flow-spec'].source['ip-prefix']}}</span>
                         </div>
-                        <div layout="row" class="layout-padding-lr15" ng-if="selectedObjects.policy.data['flow-spec'].source['node-name']">
-                            <span flex="50"><strong>Source node</strong></span><span flex>{{selectedObjects.policy.data['flow-spec'].source['node-name']}}</span>
+                        <div layout="row" class="layout-padding-lr15" ng-if="selectedObjects.policy.data['flow-spec'].source['node-id']">
+                            <span flex="50"><strong>Source node</strong></span><span flex>{{selectedObjects.policy.data['flow-spec'].source['node-id']}}</span>
                         </div>
                         <div layout="row" class="layout-padding-lr15" ng-if="selectedObjects.policy.data['flow-spec'].source['tp-id']">
                             <span flex="50"><strong>Source port</strong></span><span flex>{{selectedObjects.policy.data['flow-spec'].source['tp-id']}}</span>
@@ -310,7 +310,7 @@
                                         <div class="md-list-item-text" flex>
                                             <h3>{{ elementPolicy.data['id'] }} </h3>
                                             <p>Use: {{ elementPolicy.data['use-override']}} </p>
-                                            <p>Use: {{ elementPolicy.data['element-type']}} </p>
+                                            <p>Element type: {{ elementPolicy.data['element-type']}} </p>
                                         </div>
                                     </md-list-item>
                                 </md-list>

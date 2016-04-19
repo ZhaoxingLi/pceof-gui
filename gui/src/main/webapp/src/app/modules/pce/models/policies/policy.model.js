@@ -11,7 +11,7 @@ define([], function () {
             self = this;
 
             this.data = {};
-            this.type = null;
+            this.type = 'Prefix';
         }
 
         Policy.prototype.setData = setData;
@@ -58,7 +58,7 @@ define([], function () {
                     return 'Element';
                 }
                 else if(self.data['flow-spec'] &&
-                        self.data['flow-spec'].source['node-name']) {
+                        self.data['flow-spec'].source['node-id']) {
                     return 'Tunnel';
                 }
                 else {

@@ -45,8 +45,8 @@
                 <div layout="row" class="layout-padding-lr15">
                     <span flex="50"><strong>Type</strong></span><span flex>{{selectedNode.data['ofl3-topology:type'].replace('ofl3-topology:', '')}}</span>
                 </div>
-                <div layout="row" class="layout-padding-lr15">
-                    <span flex="50"><strong>Data Path ID</strong></span><span flex>{{selectedNode.data['ofl3-topology:datapath-id']}}</span>
+                <div layout="row" class="layout-padding-lr15" ng-if="selectedNode.data['ofl3-topology:datapath-id']">
+                    <span flex="50"><strong>Data Path ID</strong></span><span flex>{{decToHex(selectedNode.data['ofl3-topology:datapath-id'])}}</span>
                 </div>
                 <div layout="row" class="layout-padding-lr15">
                     <span flex="50"><strong>Data Path Type</strong></span><span flex>{{selectedNode.data['ofl3-topology:datapath-type']}}</span>

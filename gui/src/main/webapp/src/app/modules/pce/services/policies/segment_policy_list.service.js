@@ -15,7 +15,29 @@ define([], function () {
         function createSegmentPolicyList () {
             var obj = new SegmentPolicyListModel();
 
+            obj.getSegmentPolicyArray = getSegmentPolicyArray;
+
             return obj;
+        }
+
+        /**
+         * Creates flat array of items from Segment Policy list structure
+         * @returns {Array}
+         */
+        function getSegmentPolicyArray() {
+            /*jshint validthis:true */
+            var result = [],
+                self = this;
+
+            self.data.forEach(function(sp) {
+                if(sp.data.segment) {
+                    sp.data.segment = sp.data.segment.getSegmentArray();
+                }
+
+                result.push(sp.data);
+            });
+
+            return result;
         }
     }
 

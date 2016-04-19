@@ -36,19 +36,15 @@ define([''], function () {
 				// TODO: it throws an error if there's no data in a chosen datastore
                 FlowManagementService.assignFlowsToDevices(configData, $scope.flows, 'config');
                 FlowManagementService.assignFlowsToDevices(operationalData, $scope.flows, 'operational');
-
+                $scope.devices.forEach(function(device){
+                    device.setFlowsTypeCount($scope.flows);
+                });
                 $scope.hideProgressBar();
             });
 
         }, function(){
             $scope.hideProgressBar();
         });
-
-        $scope.getCountFlow = function(type, device){
-            return $scope.flows[device] ? $scope.flows[device].filter(function(el){
-                return el.status === type;
-            }).length : 0;
-        };
 
         $scope.filter = {
             options: {
@@ -59,7 +55,7 @@ define([''], function () {
 
         $scope.query = {
             order: 'id',
-            limit: 20,
+            limit: 25,
             page: 1,
             filter: ''
         };
@@ -79,6 +75,7 @@ define([''], function () {
               $scope.filter.form.$setPristine();
             }
         };
+
     }
 
     FlowManagementCtrl.$inject=['$q', '$scope', 'NetworkService', 'FlowManagementService', 'ErrorHandlerService'];

@@ -7,7 +7,6 @@ define([], function () {
         this.assignFlowsToDevices = assignFlowsToDevices;
         this.getFlowsByType = getFlowsByType;
 
-
         /**
          * Assigns flows from raw data into flows parameter
          * @param data
@@ -21,7 +20,7 @@ define([], function () {
                         if(flowTable.flow && flowTable.flow.length){
                             flowTable.flow.forEach(function(fl){
                                 var pathId = node.id.split(':'),
-                                    pathIdParsed = pathId && pathId.length > 1 ? parseInt(pathId[1]) : '';
+                                    pathIdParsed = pathId && pathId.length > 1 ? pathId[1] : '';
 
                                 if(!flows.hasOwnProperty(pathIdParsed)){
                                     flows[pathIdParsed] = [];
@@ -86,6 +85,8 @@ define([], function () {
                 }
             );
         }
+
+
 
     }
 

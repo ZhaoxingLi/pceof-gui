@@ -1,7 +1,7 @@
 define([], function () {
 	'use strict';
 
-	function RegisteredEventsService(Restangular) {
+	function RegisteredEventsService(Restangular, UtilsService) {
 
 		this.getRegisteredEvents = getRegisteredEvents;
 		this.clearRegisteredEvents = clearRegisteredEvents;
@@ -36,14 +36,19 @@ define([], function () {
 						"errResolution": "Check if controller is down, otherwise check your connection.",
 						"errObj": err
 					};
+					errorCbk(errData);
 				}
 			);
 		}
 
+		/**
+		 * Reads serialized JSON string from local storage, makes it object and returns
+		 * @returns {Array} Array of events; empty array if no events
+		 */
 		function readLocalRegisteredEvents(){
 			// TODO: parsing and model binding
 			var localRegisteredEvents = window.localStorage.getItem('pceRegisteredEvents');
-			console.log("Local registered events", localRegisteredEvents);
+			//console.log("Local registered events", localRegisteredEvents);
 			if(localRegisteredEvents === null){
 				self.clearRegisteredEvents();
 				return [];
@@ -53,6 +58,10 @@ define([], function () {
 			}
 		}
 
+		/**
+		 * Loops thru the passed array and adds each element to the local storage
+		 * @param newElements {Array}
+		 */
 		function writeLocalRegisteredEvents(newElements){
 			var localRegisteredEvents = self.readLocalRegisteredEvents();
 			newElements.forEach(function(element){
@@ -68,7 +77,7 @@ define([], function () {
 
 	}
 
-	RegisteredEventsService.$inject=['Restangular'];
+	RegisteredEventsService.$inject=['Restangular', 'UtilsService'];
 
 	return RegisteredEventsService;
 

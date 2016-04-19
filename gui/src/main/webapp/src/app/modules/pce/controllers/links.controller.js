@@ -19,12 +19,12 @@ define([''], function () {
         $scope.selectConnection = selectConnection;
         $scope.selectConnectionLink = selectConnectionLink;
 
-        $scope.connections = LinksService.processLinks($scope.networkData, $scope.nxDict);
+        $scope.connections = $scope.networkObj.data.connections;
         LinksService.setConnectionsColors($scope.connections, $scope.topologyData);
         console.debug('connections', $scope.connections);
 
         function highlightConnection(connection){
-            console.debug('highlighting', connection);
+            //console.debug('highlighting', connection);
             NextTopologyService.highlightLink($scope.nxTopology, connection.id);
         }
 
@@ -51,6 +51,25 @@ define([''], function () {
         function deselectConnectionLink(){
             $scope.selectedConnectionLink = null;
         }
+
+        /**
+         * Watcher for selecting selected link from another ctrl
+         */
+        $scope.$on('SELECT_CONNECTION',function (e, newVal, oldVal) {
+            var linkId = newVal._model._data.id;
+            selectConnection(LinksService.findConnectionById($scope.connections, linkId));
+        });
+
+        $scope.$on('CONN_CHECK_SEL_LINK', function () {
+            if ( $scope.selectedConnectionLink ) {
+                var port1 = $scope.selectedConnectionLink.port1,
+                    port2 = $scope.selectedConnectionLink.port2,
+                    foundLink = LinksService.findLinkByPorts($scope.selectedConnection.connectionLinks, port1, port2);
+
+                $scope.deselectConnectionLink();
+                $scope.selectConnectionLink(foundLink);
+            }
+        });
 
     }
 

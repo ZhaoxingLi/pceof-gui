@@ -1,8 +1,10 @@
 var controllers = [
+    'app/modules/pce/controllers/address-mappings.controller',
     'app/modules/pce/controllers/policies/add_policy.controller',
     'app/modules/pce/controllers/bgp-routes/bgp-route-dialog.controller',
     'app/modules/pce/controllers/bgp-routes/bgp-routes.controller',
     'app/modules/pce/controllers/configuration/configuration.controller',
+    //'app/modules/pce/controllers/configuration/configuration-fs-modal.controller',
     'app/modules/pce/controllers/configuration/configuration-modal.controller',
     'app/modules/pce/controllers/error-handler.controller',
     'app/modules/pce/controllers/flow-management/flow-management.controller',
@@ -15,11 +17,12 @@ var controllers = [
     'app/modules/pce/controllers/policies/policy.controller',
     'app/modules/pce/controllers/topology.controller',
     'app/modules/pce/controllers/statistics.controller',
-	'app/modules/pce/controllers/notifications/add-edit-global-parameter.controller',
     'app/modules/pce/controllers/notifications/add-edit-registration.controller'
 ];
 
 var services = [
+    'app/modules/pce/services/address-mapping/address-mapping.service',
+    'app/modules/pce/services/address-mapping/address-mappings-list.service',
     'app/modules/pce/services/bgp-routes/bgp-route.service',
     'app/modules/pce/services/bgp-routes/bgp-routes-list.service',
     'app/modules/pce/services/configuration.service',
@@ -40,6 +43,7 @@ var services = [
     'app/modules/pce/services/policies/path_bundle_list.service',
     'app/modules/pce/services/policies/path_list.service',
     'app/modules/pce/services/pce.service',
+    'app/modules/pce/services/pce-menu.service',
     'app/modules/pce/services/policies/policy.service',
     'app/modules/pce/services/policies/policylist.service',
     'app/modules/pce/services/notifications/registration.service',
@@ -52,9 +56,13 @@ var services = [
     'app/modules/pce/services/statistics.service',
     'app/modules/pce/services/notifications/stats.service',
     'app/common/services/utils.service',
+    'app/modules/pce/services/utils/wizard.service',
+
 ];
 
 var models = [
+    'app/modules/pce/models/address-mapping/address-mapping.model',
+    'app/modules/pce/models/address-mapping/address-mappings-list.model',
     'app/modules/pce/models/bgp-routes/bgp-route.model',
     'app/modules/pce/models/bgp-routes/bgp-routes-list.model',
     'app/modules/pce/models/policies/element_policy.model',
@@ -71,6 +79,8 @@ var models = [
     'app/modules/pce/models/policies/path_bundle.model',
     'app/modules/pce/models/policies/path_bundle_list.model',
     'app/modules/pce/models/pce.model',
+    'app/modules/pce/models/pce-menu.model',
+    'app/modules/pce/models/pce-menu-item.model',
     'app/modules/pce/models/policies/policy.model',
     'app/modules/pce/models/policies/policylist.model',
 	'app/modules/pce/models/notifications/registration.model',
@@ -79,7 +89,7 @@ var models = [
     'app/modules/pce/models/policies/segment_list.model',
     'app/modules/pce/models/policies/segment_policy.model',
     'app/modules/pce/models/policies/segment_policy_list.model',
-    'app/modules/pce/models/notifications/stats.model'
+    'app/modules/pce/models/notifications/stats.model',
 ];
 
 var components = [
@@ -96,22 +106,22 @@ define(['angular'].concat(controllers).concat(services).concat(models).concat(di
 
     function(angular,
         // controllers
-            AddPolicyCtrl, BGPRouteDialogCtrl, BGPRoutesCtrl, ConfigurationCtrl, ConfigurationModalCtrl, ErrorHandlerCtrl,
+            AddressMappingsCtrl, AddPolicyCtrl, BGPRouteDialogCtrl, BGPRoutesCtrl, ConfigurationCtrl, ConfigurationModalCtrl, ErrorHandlerCtrl,
             FlowManagementCtrl, FlowsTableCtrl, LinksCtrl, NodesCtrl, NotificationsCtrl, NotificationsTableCtrl,
-            PceCtrl, PolicyCtrl,  TopologyCtrl,  StatisticsCtrl, AddEditGlobalParameterDialogCtrl, AddEditRegistrationDialogCtrl,
+            PceCtrl, PolicyCtrl,  TopologyCtrl,  StatisticsCtrl, AddEditRegistrationDialogCtrl,
 
         // services
-            BGPRouteService, BGPRoutesListService, ConfigurationService, ElementPolicyService, ElementPolicyListService,
+            AddressMappingService, AddressMappingsListService, BGPRouteService, BGPRoutesListService, ConfigurationService, ElementPolicyService, ElementPolicyListService,
             ErrorHandlerService, FlowManagementService, GlobalParametersService, HopService, HopListService, LinksService,
             NetworkService, NodesService, NotificationService, NotificationListService, PathService, PathBundleService,
-            PathBundleListService, PathListService, PceService, PolicyService, PolicyListService, RegistrationService,
+            PathBundleListService, PathListService, PceService, PceMenuService, PolicyService, PolicyListService, RegistrationService,
             RegistrationListService, RegisteredEventsService, SegmentService, SegmentListService, SegmentPolicyService, SegmentPolicyListService,
-            StatisticsService, StatsService, UtilsService,
+            StatisticsService, StatsService, UtilsService, WizardService,
 
         // models
-            BGPRouteModel, BGPRoutesListModel, ElementPolicyModel, ElementPolicyListModel, FlowModel,
+            AddressMappingModel, AddressMappingsListModel, BGPRouteModel, BGPRoutesListModel, ElementPolicyModel, ElementPolicyListModel, FlowModel,
             GlobalParametersModel, HopModel, HopListModel, NetworkModel, NotificationModel, NotificationListModel,
-            PathModel, PathListModel, PathBundleModel, PathBundleListModel, PceModel, PolicyModel, PolicyListModel, 
+            PathModel, PathListModel, PathBundleModel, PathBundleListModel, PceModel, PceMenuModel, PceMenuItemModel, PolicyModel, PolicyListModel,
             RegistrationModel, RegistrationListModel, SegmentModel, SegmentListModel, SegmentPolicyModel,
             SegmentPolicyListModel, StatsModel, constants) {
 
@@ -128,6 +138,8 @@ define(['angular'].concat(controllers).concat(services).concat(models).concat(di
 
         angular.module('app.pce')
             // services
+            .service('AddressMappingService', AddressMappingService)
+            .service('AddressMappingsListService', AddressMappingsListService)
             .service('BGPRouteService', BGPRouteService)
             .service('BGPRoutesListService', BGPRoutesListService)
             .service('UtilsService', UtilsService)
@@ -138,6 +150,7 @@ define(['angular'].concat(controllers).concat(services).concat(models).concat(di
             .service('PathBundleService', PathBundleService)
             .service('PathBundleListService', PathBundleListService)
             .service('PceService', PceService)
+            .service('PceMenuService', PceMenuService)
             .service('PolicyListService', PolicyListService)
             .service('PolicyService', PolicyService)
             .service('NetworkService', NetworkService)
@@ -160,9 +173,12 @@ define(['angular'].concat(controllers).concat(services).concat(models).concat(di
             .service('SegmentPolicyListService', SegmentPolicyListService)
             .service('ElementPolicyService', ElementPolicyService)
             .service('ElementPolicyListService', ElementPolicyListService)
-
+            .service('WizardService', WizardService)
 
             // models
+            .factory('AddressMappingModel', AddressMappingModel)
+            .factory('AddressMappingsListModel', AddressMappingsListModel)
+            .factory('BGPRouteModel', BGPRouteModel)
             .factory('BGPRouteModel', BGPRouteModel)
             .factory('BGPRoutesListModel', BGPRoutesListModel)
             .factory('HopModel', HopModel)
@@ -172,6 +188,8 @@ define(['angular'].concat(controllers).concat(services).concat(models).concat(di
             .factory('PathBundleModel', PathBundleModel)
             .factory('PathBundleListModel', PathBundleListModel)
             .factory('PceModel', PceModel)
+            .factory('PceMenuModel', PceMenuModel)
+            .factory('PceMenuItemModel', PceMenuItemModel)
             .factory('PolicyListModel', PolicyListModel)
             .factory('PolicyModel', PolicyModel)
             .factory('NetworkModel', NetworkModel)
@@ -205,10 +223,11 @@ define(['angular'].concat(controllers).concat(services).concat(models).concat(di
             .controller('ErrorHandlerCtrl', ErrorHandlerCtrl)
             .controller('NotificationsTableCtrl', NotificationsTableCtrl)
             .controller('ConfigurationCtrl', ConfigurationCtrl)
+            //.controller('ConfigurationFsModalCtrl', ConfigurationFsModalCtrl)
             .controller('ConfigurationModalCtrl', ConfigurationModalCtrl)
             .controller('LinksCtrl', LinksCtrl)
-			.controller('AddEditGlobalParameterDialogCtrl', AddEditGlobalParameterDialogCtrl)
 			.controller('AddEditRegistrationDialogCtrl', AddEditRegistrationDialogCtrl)
+			.controller('AddressMappingsCtrl', AddressMappingsCtrl)
 
             .constant("constants", constants);
     });

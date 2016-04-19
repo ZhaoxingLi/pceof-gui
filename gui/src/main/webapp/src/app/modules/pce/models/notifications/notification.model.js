@@ -25,7 +25,6 @@ define([], function () {
 		 */
 		function setData (notificationData){
 
-
 			self.data['notification-id'] = notificationData['notification-id'];
 			self.data.window = notificationData.window;
 			self.data.threshold = notificationData.threshold; // todo: need deep copy!

@@ -135,7 +135,7 @@ gulp.task('assetsFonts', function () {
 gulp.task('copyHtml', function () {
     gutil.log(gutil.colors.cyan('INFO :: copying HTML files'));
     // Copy html
-    return gulp.src(config.app_files.views.concat(config.app_files.html))
+    return gulp.src(config.app_files.templates.concat(config.app_files.html))
         .pipe(gulp.dest(config.build_dir));
 });
 
@@ -209,19 +209,40 @@ gulp.task('copyWebInfo', function() {
     return gulp.src(config.web_info_files).pipe(gulp.dest(config.build_dir + '/WEB-INF'));
 });
 
+// Reload browsers opened tabs
+gulp.task('reload', function() {
+    return gulp.src('*/*.*')
+        .pipe(connect.reload());
+});
+
 
 
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
 
-    gulp.watch(config.app_all_files, function(){
+    gulp.watch(config.app_files.js, function(){
+        gutil.log(gutil.colors.cyan('INFO :: ******************* watch JS files *******************'));
+        runSequence('copyAppJs', 'reload');
+    });
+
+    gulp.watch(config.app_files.templates.concat(config.app_files.html), function(){
+        gutil.log(gutil.colors.cyan('INFO :: ******************* watch HTML files *******************'));
+        runSequence('copyHtml', 'reload');
+    });
+
+    gulp.watch(config.app_files.less_files, function(){
+        gutil.log(gutil.colors.cyan('INFO :: ******************* watch LESS files *******************'));
+        runSequence('assetCssClean', 'less', 'minifyCss', 'reload');
+    });
+
+    /*gulp.watch(config.app_all_files, function(){
         runSequence('clean', ['lint','copy']);
     });
 
     gulp.watch(config.app_files.less_files, function(){
-        runSequence('clean', ['lint', 'copy']);
-    });
+        runSequence(['lint', 'copy']);
+    });*/
 });
 
 gulp.task('default', function(){

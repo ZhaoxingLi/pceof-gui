@@ -23,7 +23,7 @@ define([], function () {
          * @param segmentListData {Array} Array of Segment items from server
          */
         function setData (segmentListData){
-            segmentListData.forEach(function(segmentData) {
+            segmentListData && segmentListData.forEach(function(segmentData) {
                 self.data.push(SegmentService.createSegment(segmentData));
             });
         }

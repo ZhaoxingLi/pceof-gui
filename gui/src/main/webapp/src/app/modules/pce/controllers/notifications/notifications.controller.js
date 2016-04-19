@@ -6,25 +6,21 @@ define([''], function () {
 	Controller for "Notifications" screen
 	 */
     function NotificationsCtrl($scope, $log, $mdDialog, ErrorHandlerService, StatsService,
-							   RegisteredEventsService) {
+							   RegisteredEventsService, RegistrationListService) {
 
-		// TODO: DEBUG ONLY - REMOVE
+		// TODO: DEBUG ONLY - REMOVE ALL $log OCCURRENCES
 		$scope.log = $log;
 
 		// Functions
 		$scope.init = init;
 
-		// * Global parameters
-		$scope.addEditGlobalParameter = addEditGlobalParameter;
-		$scope.warnDeleteGlobalParameter = warnDeleteGlobalParameter;
-		$scope.deleteGlobalParameter = deleteGlobalParameter;
-
 		// * Registrations
 		$scope.addEditRegistration = addEditRegistration;
 		$scope.warnDeleteRegistration = warnDeleteRegistration;
 		$scope.deleteRegistration = deleteRegistration;
-
-		// * Notifications
+		$scope.reloadRegistrations = reloadRegistrations;
+		// for table
+		$scope.removeRegTableFilter = removeRegTableFilter;
 
 		// * Registered Events
 		$scope.reloadRegisteredEvents = reloadRegisteredEvents;
@@ -35,11 +31,31 @@ define([''], function () {
 		$scope.stats = {};
 		$scope.statsLoaded = false;
 
-		$scope.filter = {
-			options: {
 
-			},
+		$scope.regTableFilter = {
+			options: {},
 			show : false
+		};
+
+		$scope.regTableQuery = {
+			order: "data['registration-id']",
+			limit: 10,
+			page: 1,
+			filter: '',
+			pageSelect: 1
+		};
+
+		$scope.eventsTableFilter = {
+			options: {},
+			show : false
+		};
+
+		$scope.eventsTableQuery = {
+			order: "['registration-id']",
+			limit: 10,
+			page: 1,
+			filter: '',
+			pageSelect: 1
 		};
 
 		$scope.editConfig = {
@@ -75,87 +91,32 @@ define([''], function () {
 					$log.log($scope.stats);
 				},
 				function(err){
-					ErrorHandlerService.log(err, true);
-					$scope.statsLoaded = false;
+					if(err.errCode === 'REGSTATS_DATA_MISSING'){
+						$scope.stats['stat-registration'].data = [];
+						$scope.statsLoaded = true;
+					}
+					else{
+						ErrorHandlerService.log(err, true);
+						$scope.statsLoaded = false;
+					}
 					$scope.hideProgressBar();
 				}
 			);
 		}
 
-		/// *** GLOBAL PARAMETERS *** ///
-
-		/**
-		 * Adds additional editable string to the global parameters table
-		 */
-		function addEditGlobalParameter(paramName){
-			$mdDialog.show({
-				clickOutsideToClose: true,
-				controller: 'AddEditGlobalParameterDialogCtrl',
-				preserveScope: true,
-				templateUrl: 'app/modules/pce/views/notifications/add-edit-global-parameter.tpl.html',
-				parent: angular.element(document.body),
-				scope: $scope,
-				locals: {
-					paramName: paramName
-				}
-			});
-		}
-
-		/**
-		 * Show warning when deleting a global parameter
-		 * @param paramName
-		 * @param $event Event passed after click
-		 */
-		function warnDeleteGlobalParameter(paramName, $event){
-			var confirm = $mdDialog.confirm()
-				.title('Delete the global parameter?')
-				.textContent("If you hit Yes, the global parameter " + paramName + " will be deleted. Are you sure?")
-				.ariaLabel('Delete global parameter')
-				.targetEvent($event)
-				.ok('Yes, delete it')
-				.cancel('No, leave it');
-			$mdDialog.show(confirm).then(function() {
-				$scope.deleteGlobalParameter(paramName);
-			}, function() {});
-		}
-
-		/**
-		 * Delete a global parameter
-		 * @param paramName
-		 */
-		function deleteGlobalParameter(paramName){
-			//$scope.showProgressBar();
-
-			console.log($scope.stats);
-
-			var gp = $scope.stats['global-parameters'];
-			// delete the parameter
-			gp.deleteGlobalParameter(paramName,
-				// request went thru
-				function(data){
-					gp.getGlobalParameters(
-						function(data){
-
-						},
-						function(err){
-							ErrorHandlerService.log(err, true);
-						}
-					);
-				},
-				// error
-				function(err){
-					//$scope.hideProgressBar();
-					ErrorHandlerService.log(err, true);
-				}
-			);
-		}
 
 		/// *** REGISTRATIONS *** ///
+
+
+		/**
+		 *
+		 * @param registration
+		 */
 		function addEditRegistration(registration){
 			$mdDialog.show({
 				clickOutsideToClose: true,
 				controller: 'AddEditRegistrationDialogCtrl',
-				templateUrl: 'app/modules/pce/views/notifications/add-edit-registration.tpl.html',
+				templateUrl: 'app/modules/pce/views/notifications/add-edit-registration/add-edit-registration.tpl.html',
 				parent: angular.element(document.body),
 				locals: {
 					registration: registration,
@@ -164,29 +125,89 @@ define([''], function () {
 			});
 		}
 
-		function warnDeleteRegistration(regId, $event){
+
+		/**
+		 * Display confirmation dialog before delete a registration
+		 * @param registration {Object}
+		 * @param $event
+		 */
+		function warnDeleteRegistration(registration, $event){
 			var confirm = $mdDialog.confirm()
 				.title('Delete the registration?')
-				.textContent("If you hit Yes, the registration " + regId + " will be deleted. Are you sure?")
+				.textContent("If you hit Yes, the registration " + registration.data['registration-id'] + " will be deleted. Are you sure?")
 				.ariaLabel('Delete registration')
 				.targetEvent($event)
 				.ok('Yes, delete it')
 				.cancel('No, leave it');
 			$mdDialog.show(confirm).then(function() {
-				$scope.deleteRegistration(regId);
+				$scope.deleteRegistration(registration);
 			}, function() {});
 		}
 
-		function deleteRegistration(regId){
+		/**
+		 * Delete registration; called when user approves the deletion
+		 * @param registration
+		 */
+		function deleteRegistration(registration){
+
+			registration.deleteRegistration(
+				// registration deleted
+				deleteRegistrationSuccessCbk,
+				// error occurred
+				deleteRegistrationErrorCbk
+			);
+
+			function deleteRegistrationSuccessCbk(){
+				$log.info("reg deleted");
+				// reload regs
+				$scope.stats['stat-registration'].updateRegistrationList(
+					getRegistrationsSuccessCbk,
+					getRegistrationsErrorCbk
+				);
+			}
+
+			function deleteRegistrationErrorCbk(err){
+				ErrorHandlerService.log(err);
+			}
+
+			function getRegistrationsSuccessCbk(data){
+
+			}
+
+			function getRegistrationsErrorCbk(err){
+				ErrorHandlerService.log(err);
+			}
 
 		}
 
-		/// *** NOTIFICATIONS *** ///
+		/**
+		 * Refresh the registration list
+		 */
+		function reloadRegistrations(){
+
+			$scope.stats['stat-registration'].updateRegistrationList();
+
+		}
+
+		/**
+		 * Cancel searching thru registrations
+		 */
+		function removeRegTableFilter(){
+			$scope.regTableFilter.show = false;
+			$scope.regTableQuery.filter = '';
+
+			if($scope.regTableFilter.form.$dirty) {
+				$scope.regTableFilter.form.$setPristine();
+			}
+		}
 
 
 		/// *** REGISTERED EVENTS *** ///
-
-
+		/**
+		 * Refresh the registered events in local storage
+		 * @param successCbk
+		 * @param errorCbk
+		 */
 		function reloadRegisteredEvents(successCbk, errorCbk){
 
 			successCbk = successCbk || function(data){
@@ -198,9 +219,12 @@ define([''], function () {
 				};
 
 			RegisteredEventsService.getRegisteredEvents(successCbk, errorCbk);
-
+			
 		}
 
+		/**
+		 * Clear registered events from local data storage
+		 */
 		function clearRegisteredEvents(){
 			RegisteredEventsService.clearRegisteredEvents();
 			$scope.registeredEvents = [];
@@ -211,7 +235,7 @@ define([''], function () {
 
     }
 
-    NotificationsCtrl.$inject=[ '$scope', '$log', '$mdDialog', 'ErrorHandlerService', 'StatsService', 'RegisteredEventsService' ];
+    NotificationsCtrl.$inject=[ '$scope', '$log', '$mdDialog', 'ErrorHandlerService', 'StatsService', 'RegisteredEventsService', 'RegistrationListService' ];
 
     return NotificationsCtrl;
 });

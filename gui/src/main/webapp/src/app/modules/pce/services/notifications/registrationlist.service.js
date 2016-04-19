@@ -15,26 +15,44 @@ define([], function () {
 		function createRegistrationList () {
 			var obj = new RegistrationListModel();
 
-			obj.getRegistrationList = getRegistrationList;
+			obj.updateRegistrationList = updateRegistrationList;
 
 			return obj;
 		}
 
 		/**
-		 * Get list of policy items from operational datastore and sets them to RegistrationList
+		 * Get registration list RegistrationList
 		 */
-		function getRegistrationList(dataStore) {
+		function updateRegistrationList(successCbk, errorCbk) {
 			/*jshint validthis:true */
 			var self = this;
 
-			var restObj = Restangular.one('restconf').one('config').one('ofl3-statistics:ofl3-statistics/');
+			successCbk = successCbk || function(data){};
+			errorCbk = errorCbk || function(err){};
 
-			return restObj.get().then(function(data) {
-				if(data['ofl3-statistics']['stat-registration']) {
-					self.setData(data['ofl3-statistics']['stat-registration']);
+			var restObj = Restangular.one('restconf').one('config').one('ofl3-statistics:ofl3-statistics');
+
+			return restObj.get().then(
+				// successfully retrieved
+				function(data) {
+					if(data['ofl3-statistics']['stat-registration']) {
+						var payload = data['ofl3-statistics']['stat-registration'];
+						self.setData(payload);
+						successCbk(payload);
+					}
+					else{
+						self.setData([]);
+					}
+				},
+				// error
+				function(err){
+					// todo: error description
+					// empty the list
+					self.setData([]);
 				}
-			});
+			);
 		}
+
 	}
 
 	RegistrationListService.$inject=['RegistrationListModel', 'Restangular'];

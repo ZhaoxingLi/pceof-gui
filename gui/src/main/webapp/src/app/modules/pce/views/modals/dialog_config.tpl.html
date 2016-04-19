@@ -4,7 +4,7 @@
             <div class="md-toolbar-tools">
                 <h2>Edit configuration</h2>
                 <span flex></span>
-                <md-button ng-click="cancelDialog()" class="md-button">Close dialog</md-button>
+                <md-button ng-click="closeDialog()" class="md-button">Close dialog</md-button>
             </div>
         </md-toolbar>
         <md-progress-linear md-mode="indeterminate" ng-show="showProgressBar"></md-progress-linear>
@@ -15,10 +15,10 @@
 
         <md-dialog-actions layout="row">
             <span flex></span>
-            <md-button ng-click="cancelDialog()">
+            <md-button ng-click="closeDialog()">
                 Close
             </md-button>
-            <md-button ng-click="saveData()" ng-disabled="">
+            <md-button ng-click="saveData(configMethod)" ng-disabled="">
                 Save
             </md-button>
         </md-dialog-actions>

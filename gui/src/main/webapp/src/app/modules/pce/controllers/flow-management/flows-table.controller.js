@@ -13,7 +13,7 @@ define([''], function () {
 
         $scope.query = {
             order: 'flow-name',
-            limit: 20,
+            limit: 25,
             page: 1,
             filter: ''
         };

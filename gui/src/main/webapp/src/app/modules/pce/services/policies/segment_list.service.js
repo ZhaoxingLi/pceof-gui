@@ -16,6 +16,8 @@ define([], function () {
         function createSegmentList () {
             var obj = new SegmentListModel();
 
+            obj.getSegmentArray = getSegmentArray;
+
             return obj;
         }
 
@@ -26,6 +28,22 @@ define([], function () {
          */
         function sortSegmentsByProperty(segmentList, property) {
             return $filter('orderBy')(segmentList, property);
+        }
+
+        /**
+         * Creates flat array of items from Segment list structure
+         * @returns {Array}
+         */
+        function getSegmentArray() {
+            /*jshint validthis:true */
+            var result = [],
+                self = this;
+
+            self.data.forEach(function(s) {
+                result.push(s.data);
+            });
+
+            return result;
         }
     }
 

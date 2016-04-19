@@ -8,19 +8,30 @@ define(['lodash'], function () {
         //params
         $scope.config = {
             nd: null,
+            rp: null,
             fs: null,
+            kafka: null,
+            xrv: null
+        };
+
+        $scope.methods = {
+            nd: 'NeighbourDiscovery',
+            fs: null,//'FlowStatistic',
+            rp: 'RegistrationParameters',
             kafka: null,
             xrv: null
         };
 
         $scope.section = {
             nd: 'loading',
+            rp: 'loading',
             fs: 'loading',
             kafka: 'loading',
             xrv: 'loading'
         };
 
         // methods
+        $scope.getCorrectValueView = getCorrectValueView;
         $scope.init = init;
         $scope.openEditDialog = openEditDialog;
 
@@ -33,19 +44,26 @@ define(['lodash'], function () {
          */
 		function init(){
 
-            ConfigurationService.getNeighbourDiscovery(function(data){
-                $scope.config.nd = data;
-                $scope.section.nd = 'data';
-            },function(err){
-                $scope.section.nd = 'no-data';
-                console.warn('WARNING :: no neighbour discovery configuration found - ', err);
-            });
-            ConfigurationService.getFlowStatistic(function(){},function(){});
-            ConfigurationService.getKafka(function(){},function(){});
-            ConfigurationService.getXrv(function(){},function(){});
+            for (var prop in $scope.methods) {
+                if (!$scope.methods.hasOwnProperty(prop) || $scope.methods[prop] === null) {
+                    continue;
+                }
+
+                ConfigurationService['get' + $scope.methods[prop]](prop, function(data, type){
+                    $scope.config[type] = data;
+                    $scope.section[type] = 'data';
+                },function(err, type){
+                    $scope.section[type] = 'no-data';
+                    console.warn('WARNING :: no configuration found - ', err);
+                });
+            }
 
 		}
 
+        /**
+         * MEthod for opening modal win for editting configuration
+         * @param type
+         */
         function openEditDialog(type){
             $mdDialog.show({
                 clickOutsideToClose: true,
@@ -55,13 +73,20 @@ define(['lodash'], function () {
                 locals: {
                     data:{
                         config: $scope.config[type] ? $scope.config[type] : {},
-                        type: type
+                        type: type,
+                        method: $scope.methods[type]
                     }
                 }
             }).then(function(data) {
+                //console.log('data', data, type);
+
                 $scope.config[type] = _.cloneDeep(data);
-                $scope.section.nd = 'data';
+                $scope.section[type] = 'data';
             });
+        }
+
+        function getCorrectValueView(val){
+            return Array.isArray(val) ? val.join(',') : val;
         }
 
 

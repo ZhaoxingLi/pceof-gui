@@ -30,10 +30,14 @@
         <md-divider></md-divider>
         <md-subheader class="md-primary">Notifications</md-subheader>
         <div layout="row">
+
+			<div ng-hide="sidePanelObject.data.notification.data.length" layout-fill class="layout-padding-5-15 md-3-line">
+				There are no notifications.
+			</div>
+
             <md-list layout-fill>
                 <md-list-item class="md-3-line" layout="row"
-                              ng-repeat="notification in sidePanelObject.data.notification.data"
-                              >
+                              ng-repeat="notification in sidePanelObject.data.notification.data">
                     <div layout-fill class="layout-margin-b15">
                         <div layout="row" class="layout-padding-t5">
                             <span flex="35"><strong>Notification Id</strong></span>
@@ -57,7 +61,6 @@
                         </div>
                         <md-divider></md-divider>
                     </div>
-
                 </md-list-item>
             </md-list>
         </div>

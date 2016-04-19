@@ -13,10 +13,6 @@ define([], function () {
 		NotificationList.prototype.setData = setData;
 
 		/**
-		 * Implementations
-		 */
-
-		/**
 		 * Fills NotificationList with data
 		 * @param notificationListData {Array} Array of policy items from server
 		 */

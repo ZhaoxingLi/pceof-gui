@@ -35,13 +35,9 @@ define([], function () {
 			};
 
 			return fDate;
-
 		}
 
     }
-
-
-
 
     UtilsService.$inject=['$filter'];
 

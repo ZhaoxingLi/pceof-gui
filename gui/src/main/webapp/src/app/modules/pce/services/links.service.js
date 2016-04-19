@@ -5,8 +5,29 @@ define([], function () {
 
         this.processLinks = processLinks;
         this.setConnectionsColors = setConnectionsColors;
+        this.findConnectionById = findConnectionById;
+        this.findLinkByPorts = findLinkByPorts;
+
+        function findLinkByPorts(list, port1, port2){
+            var link = null;
+            list.some(function (item) {
+                if ( item.port1 === port1 && item.port2 === port2 ) {
+                    link = item;
+                }
+                return item.port1 === port1 && item.port2 === port2;
+            });
+
+            return link;
+        }
+
+        function findConnectionById(list, id){
+            var result = $filter('filter')(list, {id : id});
+
+            return result.length ? result[0] : null;
+        }
 
         function setConnectionsColors(connections, topologyData){
+            //console.warn('connections, topologyData',connections, topologyData);
             connections.forEach(setConnectionColor, topologyData);
 
             /**
@@ -25,14 +46,16 @@ define([], function () {
             }
         }
 
-        function processLinks(networkData, nxDict){
-            var connectionsObj = {};
+        function processLinks(networkData, nxDict, topologyData){
+            var connectionsObj = {},
+                connections = [];
 
-            console.debug(networkData);
+            //console.debug(networkData);
             networkData['ietf-network-topology:link'].forEach(processLink);
+            connections = Object.keys(connectionsObj).map(function(con){return connectionsObj[con];});
+            setConnectionsColors(connections, topologyData);
 
-
-            return Object.keys(connectionsObj).map(function(con){return connectionsObj[con];});
+            return connections;
 
 
             function processLink(link){
@@ -71,7 +94,7 @@ define([], function () {
                     newConLink.status = link.data['ofl3-topology:status'];
                     connection.connectionLinks.push(newConLink);
                     connection.status[link.data['ofl3-topology:status']]++;
-                    console.debug('status', link.data['ofl3-topology:status']);
+                    //console.debug('status', link.data['ofl3-topology:status']);
                     if(link.data['ofl3-topology:status']==='operational'){
                         connection.status.configured++;
                     }

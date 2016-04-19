@@ -39,8 +39,9 @@ define([''], function () {
 
         $scope.bgpTableQuery = {
             order: "data['ip-prefix']",
-            limit: 10,
+            limit: 25,
             page: 1,
+			options: [25, 50, 100],
             filter: ''
         };
 
@@ -90,12 +91,11 @@ define([''], function () {
             dialogOptions.locals.bgpRoute = BGPRouteService.createBGPRoute();
             dialogOptions.targetEvent = event;
             $mdDialog.show(dialogOptions).then(loadBgpRoutesList);
-
-        };
+        }
 
         function loadBgpRoutesList(){
             $scope.showProgressBar();
-            $scope.bgpRoutesList.getBGPRoutesList().then(function(){$scope.hideProgressBar()});
+            $scope.bgpRoutesList.getBGPRoutesList().then(function(){$scope.hideProgressBar();}, function(){$scope.hideProgressBar();});
 
         }
 

@@ -63,7 +63,7 @@ define([''], function () {
         function savingErrorCBK(err){
             $scope.errMsgs = [];
             if(err){
-                err.data.errors.error.forEach(function(curErrObj){$scope.errMsgs.push(curErrObj['error-message'])});
+                err.data.errors.error.forEach(function(curErrObj){$scope.errMsgs.push(curErrObj['error-message']);});
             }
         }
 
@@ -89,7 +89,7 @@ define([''], function () {
             }
             else{
                 BGPRouteService.createBGPRoute().getBGPRoute($scope.bgpRoute.data['ip-prefix']).then(
-                    function(){savingErrorCBK({data:{errors:{error:[{'error-message':'BGP Route with ip prefix '+$scope.bgpRoute.data['ip-prefix']+' already exists.'}]}}})},
+                    function(){savingErrorCBK({data:{errors:{error:[{'error-message':'BGP Route with ip prefix '+$scope.bgpRoute.data['ip-prefix']+' already exists.'}]}}});},
                     saveData
                 );
             }

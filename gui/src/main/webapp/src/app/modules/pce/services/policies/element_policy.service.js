@@ -13,11 +13,11 @@ define([], function () {
          * @param elementPolicyData {Object} Data for one ElementPolicy object
          * @returns {Object} ElementPolicy object with service methods
          */
-        function createElementPolicy(elementPolicyData) {
+        function createElementPolicy(elementPolicyData, pathBundleId) {
             var obj = new ElementPolicyModel();
 
             if(elementPolicyData) {
-                obj.setData(elementPolicyData);
+                obj.setData(elementPolicyData, pathBundleId);
             }
 
             return obj;

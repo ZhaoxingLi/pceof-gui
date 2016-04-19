@@ -38,7 +38,7 @@ define([], function () {
 
 		// If true, track errors in the console
 		this.debug = true;
-		this.defaultMethod = 'dialog';
+		this.defaultMethod = 'toast';
 
 		/**
 		 * A tiny pop-up at the top right corner. Can expand to a dialog window

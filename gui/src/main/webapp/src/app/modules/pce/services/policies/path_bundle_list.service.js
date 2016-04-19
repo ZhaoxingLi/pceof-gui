@@ -26,6 +26,14 @@ define([], function () {
                 self = this;
 
             self.data.forEach(function(pb) {
+                if(pb.data.constraints && pb.data.constraints['element-policy']) {
+                    pb.data.constraints['element-policy'] = pb.data.constraints['element-policy'].getElementPolicyArray();
+                }
+
+                if(pb.data.constraints && pb.data.constraints['segment-policy']) {
+                    pb.data.constraints['segment-policy'] = pb.data.constraints['segment-policy'].getSegmentPolicyArray();
+                }
+
                 result.push(pb.data);
             });
 

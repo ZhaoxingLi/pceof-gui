@@ -36,10 +36,17 @@ define([], function () {
         function getInvalidHops(){
             /*jshint validthis:true */
             var self = this;
-            var result = [];
+            var result = [],
+                regEx = new RegExp(constants.regexps['ip-address']);
 
-            this.data['next-hop'].forEach(function(val){if(!val.match(constants.regexps['ip-address'])){result.push(val)}});
+            this.data['next-hop'].forEach(pushIfInvalid);
             return result;
+
+            function pushIfInvalid(str){
+                if(!regEx.test(str)){
+                    result.push(str);
+                }
+            }
 
         }
 

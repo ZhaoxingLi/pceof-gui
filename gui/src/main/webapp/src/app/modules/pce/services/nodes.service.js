@@ -4,6 +4,7 @@ define([], function () {
     function NodesService($filter) {
 
         this.getPortLinksInTopo = getPortLinksInTopo;
+        this.findNodeByLabel = findNodeByLabel;
 
         /**
          * Returns array of links to be highlighted on port mouseenter in node detail
@@ -41,6 +42,19 @@ define([], function () {
                 return (networkLinkObj.data.source['source-tp'] === portId && networkLinkObj.data.source['source-node'] === nodeId) ||
                     (networkLinkObj.data.destination['dest-tp'] === portId && networkLinkObj.data.destination['dest-node'] === nodeId);
             }
+        }
+
+        /**
+         * Return found node in network data by label
+         * @param list
+         * @param label
+         */
+        function findNodeByLabel(list, label){
+            var node = list.filter(function (item) {
+                    return item.data['node-id'] === label;
+                });
+
+            return node.length ? node[0] : null;
         }
     }
 

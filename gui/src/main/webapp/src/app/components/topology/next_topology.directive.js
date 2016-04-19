@@ -7,11 +7,12 @@ define(['next-ui'], function() {
 				topologyData: '=',
 				cbkFunctions: '=?',
 				dictionaries: '=?',
-				topo: '=?'
+				topo: '=?',
+                topoColors: '=?'
 			},
 			template: '<div id="graph-container" class="col-md-12"></div>',
 			link: function(scope) {
-				var initialized = false;
+				var saveTopoInterval = null;
 
 				scope.topo = null;
 
@@ -19,7 +20,7 @@ define(['next-ui'], function() {
 				 * Colors used for topology objects
 				 * @type {nx.data.Dictionary}
 				 */
-				var topoColors = new nx.data.Dictionary({
+				scope.topoColors = new nx.data.Dictionary({
 					'operational': '#0f9d58',
 					'configured': '#464646',
 					'operational-mixed': '#C4AF00',
@@ -32,7 +33,7 @@ define(['next-ui'], function() {
 				/**
 				 * init next topology graph
 				 */
-				scope.init = function (nodes, links) {
+				scope.init = function (successCbk) {
 					// register "font" icon
 					nx.graphic.Icons.registerFontIcon('devicedown', 'FontAwesome', "\uf057", 20);
 
@@ -48,7 +49,7 @@ define(['next-ui'], function() {
 					//createNodeStatusLayer();
 					defineCustomEvents();
 
-					scope.topo = NextTopologyService.getNxTopClass(topoColors);
+					scope.topo = NextTopologyService.getNxTopClass(scope.topoColors);
 					scope.setTopoEvents();
 
 					// App events - if app is resized
@@ -58,7 +59,10 @@ define(['next-ui'], function() {
 
 					// Attach topo to app
 					scope.topo.attach(app);
-					initialized = true;
+
+					if ( successCbk ) {
+						successCbk();
+					}
 				};
 
 				/**
@@ -75,8 +79,13 @@ define(['next-ui'], function() {
 							NextTopologyService.setTopologyDataFromLS(data, scope.topo, scope.dictionaries.nodes);
 						}
 
+						// clear interval after reload data
+						if ( saveTopoInterval ) {
+							clearInterval(saveTopoInterval);
+						}
+
 						// set interval for saving topo nodes position
-						window.setInterval(function(){NextTopologyService.saveTopologyDataToLS(scope.topo);}, 5000);
+						saveTopoInterval = window.setInterval(function(){NextTopologyService.saveTopologyDataToLS(scope.topo);}, 5000);
 					});
 
 					// Fired when topology is generated
@@ -87,6 +96,7 @@ define(['next-ui'], function() {
 						//sender.attachLayer("status", "NodeStatus");
 						sender.registerScene('ce', 'CustomEvents');
 						sender.activateScene('ce');
+						scope.topo.tooltipManager().showNodeTooltip(false);
 					});
 				};
 
@@ -97,7 +107,7 @@ define(['next-ui'], function() {
 					//console.log('scope.topologyData', scope.topologyData);
 
 					if( scope.topologyData.nodes.length ) { //&& initialized === false
-						scope.init();
+						scope.init(scope.cbkFunctions.topologyGenerated);
 					}
 				});
 
@@ -149,16 +159,15 @@ define(['next-ui'], function() {
 								this.inherited(model);
 
 								// if status is down
-								if( this.model().get("status") == "configured" ) {
-									this._drawDeviceDownBadge();
-								}
+                                this._drawDeviceDownBadge(this.model());
 
 							},
-							"_drawDeviceDownBadge": function(){
+							"_drawDeviceDownBadge": function(model){
 
 								var badge, badgeBg, badgeText,
 									icon, iconSize, iconScale,
-									bound, boundMax, badgeTransform;
+									bound, boundMax, badgeTransform,
+									badgeVisibility = model.get("status") === "configured";
 
 								// views of badge
 								badge = this.view("deviceDownBadge");
@@ -177,20 +186,28 @@ define(['next-ui'], function() {
 								};
 
 								// make badge visible
-								badgeText.set("visible", true);
+								badgeText.set("visible", badgeVisibility);
 
 								// get bounds and apply them for white background
 								bound = badge.getBound();
 								boundMax = Math.max(bound.width - 6, 1);
 								badgeBg.sets({
 									width: boundMax,
-									visible: true
+									visible: badgeVisibility
 								});
 
 								// set position of the badge
 								badgeBg.setTransform(badgeTransform.x, badgeTransform.y);
 								badgeText.setTransform(badgeTransform.x, badgeTransform.y);
 
+							},
+							"_showDownBadge": function(){
+								this.view("deviceDownBadgeBg").set("visible", true);
+								this.view("deviceDownBadgeText").set("visible", true);
+							},
+							"_hideDownBadge": function(){
+								this.view("deviceDownBadgeBg").set("visible", false);
+								this.view("deviceDownBadgeText").set("visible", false);
 							}
 						}
 					});
@@ -281,11 +298,14 @@ define(['next-ui'], function() {
 								this.view("badgeBg").visible(true);
 								this.view("badgeText").visible(true);
 
+                                //set correct link color
+                                this.set('color',this.getColor());
+
 							},
 							// generate the color for a link
 							getColor: function(){
 								// get color depend on status
-								var color = NextTopologyService.getLinkColor(this.model(), topoColors);
+								var color = NextTopologyService.getLinkColor(this.model()._data.status, scope.topoColors);
 								// make it available outside next
 								this.model()._data.linkColor = color;
 								return color;

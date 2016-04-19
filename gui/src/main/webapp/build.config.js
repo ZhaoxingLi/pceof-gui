@@ -25,12 +25,11 @@ module.exports = {
         jsunit: ['src/**/*.spec.js'],
         js_common: ['src/app/common/**/*.js'],
         js_app: ['src/app/modules/**/*.js', 'src/app/modules/**/**/*.js'],
-        views: ['src/**/*.tpl.html'],
         json: ['src/**/*.json'],
 
         html: ['src/index.html'],
         less: 'assets/less/main.less',
-        less_files: 'assets/less/*.less',
+        less_files: ['assets/less/*.less','src/app/modules/**/*.less'],
         css: ['assets/css/main.css'],
 
         lang: ['src/app/**/assets/data/*.json'],

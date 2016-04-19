@@ -3,11 +3,7 @@ define([], function () {
 	
 	function NotificationService(NotificationModel, Restangular) {
 		this.createNotification = createNotification;
-		
-		
-		/**
-		 * Implementation
-		 */
+
 		
 		/**
 		 * Creates Notification object, fills it with notificationData (if available), adds methods and returns the object.
@@ -20,9 +16,7 @@ define([], function () {
 			if(notificationData) {
 				obj.setData(notificationData);
 			}
-			
-			//obj.getNotification = getNotification;
-			
+
 			return obj;
 		}
 		

@@ -12,6 +12,7 @@ define([], function () {
          */
         function Network(data) {
             this.getAllTerminationPoints = getAllTerminationPoints;
+            this.findNodeById = findNodeById;
 
             this.init();
             this.fill(data);
@@ -35,6 +36,19 @@ define([], function () {
             }
         }
 
+        function findNodeById(id){
+            var node = null,
+                found = this.data.node.some(function (n) {
+                    if (n.data['node-id'] === id){
+                        node = n;
+                    }
+
+                    return n.data['node-id'] === id;
+                });
+
+            return node;
+        }
+
 
         /**
          * Creates basic properties in object
@@ -45,6 +59,7 @@ define([], function () {
             this.data['network-id'] = "";
             this.data['ofl3-topology:links-in-group'] = [];
             this.data.node = [];
+            this.data.connections = [];
             this.data['ietf-network-topology:link'] = [];
         }
 
@@ -96,6 +111,7 @@ define([], function () {
                         this.collapseAllPorts = collapseAllPorts;
                         this.expandAllPorts = expandAllPorts;
                         this.processPortLinks = processPortLinksForAllNodes;
+                        this.updateData = updateData;
 
                         cloneObj(sourceDataObj, this.data);
 
@@ -113,6 +129,10 @@ define([], function () {
                             nodeData['ietf-network-topology:termination-point'].map(function(tp){
                                 tp.collapse();
                             });
+                        }
+
+                        function updateData(data){
+                            this.data = nodeData = data;
                         }
 
                     };

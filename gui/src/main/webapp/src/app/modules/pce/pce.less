@@ -1,6 +1,38 @@
 .toolbar{
     background: #000 !important;
+    line-height: 66px;
 }
+
+a.active, button.active {
+  i.top-menu-icon, span {
+    color: #9EB4E6;
+  }
+
+}
+
+md-menu-item.active a{
+    background-color: rgba(158,158,158,0.2);
+}
+
+md-menu-item:not(.active) a, md-menu-item:not(.active):focus a{
+    background-color: #ffffff!important;
+}
+
+span.mainMenuItem{
+    padding-top: 27px;
+
+}
+
+md-menu-item{
+    i.material-icons{
+        line-height: 45px;
+        padding-right: 15px;
+    }
+}
+md-menu-bar{
+    padding: 0 !important;
+}
+
 
 .product-label {
     margin: auto 16px auto 10px;
@@ -16,14 +48,15 @@ md-toolbar.md-default-theme:not(.md-menu-toolbar) .md-button:not(.md-raised), md
 /* Main PCE classes */
 .pce-wrapper{
 
-    .toolbar{
+    .content-wrapper{
         position: relative;
 
         md-progress-linear{
             position: absolute;
-            bottom: -5px;
+            top: 0;
             left: 0;
             width: 100%;
+            z-index: 5;
         }
     }
 
@@ -31,13 +64,8 @@ md-toolbar.md-default-theme:not(.md-menu-toolbar) .md-button:not(.md-raised), md
     #graph-container{
         width: 100%;
         height: 100%;
-    }
-
-    .material-icons {
-        vertical-align: middle;
-
-        &.top-menu-icon {
-            font-size: 18px;
+        .n-topology-nav {
+            display: none;
         }
     }
 
@@ -391,7 +419,7 @@ md-toolbar.md-table-toolbar.alternate {
     line-height: 1em;
     padding-left: 0px;
 
-    li {
+    li.breadcrumb {
         display: inline-block;
         color: rgba(0,0,0,0.54);
 
@@ -403,12 +431,15 @@ md-toolbar.md-table-toolbar.alternate {
                  text-decoration: underline;
             }
         }
+
+        &.active {
+            color: rgb(33, 150, 243);
+        }
     }
 }
 
 // Configuration
 #configuration-container{
-
 }
 
 // Topology
@@ -431,3 +462,34 @@ md-toolbar.md-table-toolbar.alternate {
         }
     }
 }
+
+
+// Address mappings
+.addressMappings {
+    th.md-column:first-child{
+        width: 20px;
+    }
+}
+
+// BGP ROUTES
+// Address mappings
+.bgpRoutesList {
+    th.md-column:nth-child(1){
+        width: 20%;
+    }
+    th.md-column:nth-child(2){
+        width: 40%;
+    }
+    th.md-column:nth-child(3){
+        width: 20%;
+    }
+}
+
+.material-icons {
+    vertical-align: middle;
+
+    &.top-menu-icon {
+        font-size: 18px;
+    }
+}
+

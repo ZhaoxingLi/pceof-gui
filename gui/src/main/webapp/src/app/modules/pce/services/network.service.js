@@ -4,8 +4,116 @@ define(['lodash'], function () {
     /**
      * Service to handle network object
      */
-    function NetworkService(NetworkModel, Restangular, UtilsService) {
+    function NetworkService(NetworkModel, Restangular, UtilsService, LinksService, NextTopologyService) {
         var self = this;
+
+        /**
+         * Update node and links status ( next topo, network obj);
+         * @param nxTopo
+         * @param nxDict
+         * @param networkObj
+         */
+        this.updateTopologyStatuses = function (nxTopo, nxDict, networkObj, newNxDict, nxTopoColors, successCbk) {
+            var updateNodesStatuses = function (nodes) {
+                    //console.log('nodes', nodes);
+                    nodes.forEach(function (node) {
+                        var nxNode = nxTopo.getNode(nxDict.nodes.getItem(node.data['node-id'])),
+                            diffStatus = nxNode ? nxNode.model().get("status") !== node.data['ofl3-topology:status'] : null;
+
+                        //check if node has diifferent status
+                        if (nxNode && diffStatus) {
+                            nxNode.model().set("status", node.data['ofl3-topology:status']);
+                            var netObjNode = networkObj.findNodeById(node.data['node-id']);
+
+                            if (netObjNode) {
+                                netObjNode.updateData(node.data);
+                            }
+
+                            if( node.data['ofl3-topology:status'] == "configured" ){
+                                nxNode._showDownBadge();
+                            } else {
+                                nxNode._hideDownBadge();
+                            }
+                        }
+                    });
+                },
+                updateSingleNodeStatus = function (id, networkObj, newNetworkObj) {
+                    var netObjNode = networkObj.findNodeById(id),
+                        newNetObjNode = newNetworkObj.findNodeById(id);
+
+                    if (netObjNode && newNetObjNode) {
+                        netObjNode.updateData(newNetObjNode.data);
+                    }
+                },
+                updateLinksStatuses = function (topoData, networkObj, newNetworkObj) {
+                    var findConnectionByST = function (connections, source, target) {
+                            var conn = null;
+
+                            connections.some(function (connection) {
+                                if ( connection.sourceName === source && connection.targetName === target ) {
+                                    conn = connection;
+                                }
+                                return connection.sourceName === source && connection.targetName === target;
+                            });
+
+                            return conn;
+                        },
+                        updateConnectionProp = function (conn, newConn) {
+                            for(var prop in conn){
+                                conn[prop] = newConn[prop];
+                            }
+                        };
+
+                    networkObj.data.connections.forEach(function (connection) {
+                        var newConn = findConnectionByST(newNetworkObj.data.connections, connection.sourceName, connection.targetName);
+
+                        if ( newConn ) {
+                            var isDifferentStatus = connection.status.configured !== newConn.status.configured
+                                || connection.status.operational !== newConn.status.operational;
+
+                            if ( isDifferentStatus ) {
+                                var nxLink  = nxTopo.getLink(connection.id);
+
+                                if ( nxLink ) {
+                                    nxLink.model().set("status", newConn.status);
+                                    nxLink.update();
+                                    updateConnectionProp(connection, newConn);
+                                    updateSingleNodeStatus(connection.sourceName, networkObj, newNetworkObj);
+                                    updateSingleNodeStatus(connection.targetName, networkObj, newNetworkObj);
+                                }
+                            }
+                        }
+                    });
+                };
+
+            if ( nxTopo ) {
+                // get new network data for updating
+                this.getNetwork(function (newNetworkObj) {
+                    var rawTopoData = {
+                            nodes: newNetworkObj.data.node,
+                            links: newNetworkObj.data['ietf-network-topology:link'],
+                            groups: newNetworkObj.data['ofl3-topology:links-in-group']
+                        },
+                        topoData = {nodes: [], links:[]};
+
+                    updateNodesStatuses(newNetworkObj.data.node);
+
+                    if ( rawTopoData.nodes.length ) {
+                        topoData.nodes = self.getNodesData(rawTopoData.nodes, newNxDict);
+                        topoData.links = self.getLinksData(rawTopoData.links, rawTopoData.groups, newNxDict, nxTopoColors);
+                        newNetworkObj.data.connections = LinksService.processLinks(newNetworkObj.data, newNxDict, topoData);
+                        updateLinksStatuses(topoData, networkObj, newNetworkObj);
+                        //console.info('INFO :: newNetworkObj - ', newNetworkObj);
+                    }
+
+                    successCbk();
+
+                }, function () {
+
+                })
+            }
+
+        };
 
         /**
          * Get device name found by datapath id
@@ -15,11 +123,9 @@ define(['lodash'], function () {
          */
         this.getNodeByDataPath = function (nodes, inventoryNodeId) {
             var inventoryNodeIdParts = inventoryNodeId.split(':'),
-                result = UtilsService.findObjInArray(nodes, {'datapath-id': parseInt(inventoryNodeIdParts[1])}, 'node-id');
-
+                result = UtilsService.findObjInArray(nodes, {'datapath-id': inventoryNodeIdParts[1] || inventoryNodeId}, 'node-id');
             return result ? result : inventoryNodeId;
         };
-
 
         /**
          * Get NX topo links obj list between nodes
@@ -29,12 +135,12 @@ define(['lodash'], function () {
          * @returns {Array}
          */
         this.getLinksDataByNodes = function (nxTopo, nodes, nodesRealIds) {
+
             var nodesNxIds = nodesRealIds.map(function (node) {
                     return UtilsService.findObjInArray(nodes, {'node-id': node}, 'id');
                 }),
                 linksArray = [],
                 index = 0;
-
             while ( !angular.isUndefined(nodesNxIds[index + 1]) ){
                 var cLinkKey = nodesNxIds[index] < nodesNxIds[index + 1] ? nodesNxIds[index] + '-' + nodesNxIds[index + 1] : nodesNxIds[index + 1] + '-' + nodesNxIds[index],
                     linkObj = nxTopo.getLinksByNode(nodesNxIds[index], nodesNxIds[index + 1])[cLinkKey];
@@ -81,7 +187,7 @@ define(['lodash'], function () {
          * @param nxDict
          * @returns {Array}
          */
-        this.getLinksData = function(rawLinks, rawGroups, nxDict){
+        this.getLinksData = function(rawLinks, rawGroups, nxDict, nxTopoColors){
             // containter link index
             var cLinkIndex = null,
                 linksObj = {},
@@ -115,6 +221,7 @@ define(['lodash'], function () {
                             id: cLinkKey,
                             source: srcNodeId,
                             target: destNodeId,
+                            linkColor: null,
                             gLinks: [],
                             status: {
                                 operational: 0,
@@ -122,6 +229,11 @@ define(['lodash'], function () {
                             }
                         };
                         setLinkStatus(nxLinkObj, link.data['link-id']);
+
+                        if ( nxTopoColors ){
+                            nxLinkObj.linkColor = NextTopologyService.getLinkColor(nxLinkObj.status, nxTopoColors);
+                        }
+
                         nxLinks.push(nxLinkObj);
                     }
 
@@ -160,6 +272,10 @@ define(['lodash'], function () {
                         if(!updatedStatus.hasOwnProperty(linkId)){
                             setLinkStatus(nxLinkObj, linkId);
                             updatedStatus[linkId] = true;
+
+                            if ( nxTopoColors ){
+                                nxLinkObj.linkColor = NextTopologyService.getLinkColor(nxLinkObj.status, nxTopoColors);
+                            }
                         }
                         nxLinkObj.gLinks.push(linkId);
                     }
@@ -288,6 +404,17 @@ define(['lodash'], function () {
                     this.status = data['ofl3-topology:status'];
                     this.datapathType = data['ofl3-topology:datapath-type'];
                     this.datapathId = data['ofl3-topology:datapath-id'];
+                    this.configFlowsCount = 0;
+                    this.operationalFlowsCount = 0;
+                    this.confAndOperFlowsCount = 0;
+
+                    this.setFlowsTypeCount = setFlowsTypeCount;
+
+                    function setFlowsTypeCount(flows){
+                        this.configFlowsCount = flows[this.datapathId].filter(function(f){return f.status === 'config'}).length;
+                        this.operationalFlowsCount = flows[this.datapathId].filter(function(f){return f.status === 'operational'}).length;
+                        this.confAndOperFlowsCount = flows[this.datapathId].filter(function(f){return f.status === 'config + operational'}).length;
+                    }
                 };
 
                 //TODO rest call config and operational invntory data
@@ -302,7 +429,7 @@ define(['lodash'], function () {
 
     }
 
-    NetworkService.$inject=['NetworkModel', 'Restangular', 'UtilsService'];
+    NetworkService.$inject=['NetworkModel', 'Restangular', 'UtilsService', 'LinksService', 'NextTopologyService'];
 
 
     return NetworkService;

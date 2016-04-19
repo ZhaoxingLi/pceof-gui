@@ -3,7 +3,7 @@ define([''], function () {
     'use strict';
 
     function PolicyCtrl($filter, $mdDialog, $scope, HopListService, NetworkService, NextTopologyService, PathService,
-                        PolicyListService, UtilsService) {
+                        PolicyService, PolicyListService, UtilsService) {
 
         $scope.policyListConfig = [];
         $scope.policyListOperational = [];
@@ -28,6 +28,7 @@ define([''], function () {
         $scope.reloadConfigPolicy = reloadConfigPolicy;
         $scope.reloadOperationalPolicy = reloadOperationalPolicy;
 
+
         init();
 
         /**
@@ -40,7 +41,7 @@ define([''], function () {
                 clickOutsideToClose: true,
                 controller: 'AddPolicyCtrl',
                 preserveScope: true,
-                templateUrl: 'app/modules/pce/views/policy/dialog_add_policy.tpl.html',
+                templateUrl: $scope.viewPath +'policy/add_dialog/dialog_add_policy.tpl.html',
                 parent: angular.element(document.body),
                 scope: $scope,
                 locals: {
@@ -73,6 +74,27 @@ define([''], function () {
          */
         function clearPaths() {
             NextTopologyService.clearPathLayer($scope.nxTopology);
+        }
+
+        /**
+         * Clears data from $scope.selectedObjects, based on objectType parameter
+         * @param objectType
+         */
+        function clearSelectedObjects(objectType) {
+            switch(objectType) {
+                case 'policy':
+                    $scope.selectedObjects.pathBundle = null;
+                    break;
+                case 'pathBundle':
+                    $scope.selectedObjects.path = null;
+                    $scope.selectedObjects.segmentPolicy = null;
+                    break;
+                case 'path':
+                case 'segmentPolicy':
+                    break;
+                default:
+                    $scope.selectedObjects.policy = null;
+            }
         }
 
         /**
@@ -118,27 +140,6 @@ define([''], function () {
             });
 
             console.log(links);
-        }
-
-        /**
-         * Clears data from $scope.selectedObjects, based on objectType parameter
-         * @param objectType
-         */
-        function clearSelectedObjects(objectType) {
-            switch(objectType) {
-                case 'policy':
-                    $scope.selectedObjects.pathBundle = null;
-                    break;
-                case 'pathBundle':
-                    $scope.selectedObjects.path = null;
-                    $scope.selectedObjects.segmentPolicy = null;
-                    break;
-                case 'path':
-                case 'segmentPolicy':
-                    break;
-                default:
-                    $scope.selectedObjects.policy = null;
-            }
         }
 
         /**
@@ -217,12 +218,14 @@ define([''], function () {
         }
 
         $scope.$on('RELOAD_POLICIES', function() {
-            init();
+            if($scope.tabContent !== 'policyDetail') {
+                init();
+            }
         });
     }
 
     PolicyCtrl.$inject=['$filter', '$mdDialog', '$scope', 'HopListService', 'NetworkService', 'NextTopologyService', 'PathService',
-                        'PolicyListService', 'UtilsService'];
+                        'PolicyService', 'PolicyListService', 'UtilsService'];
 
     return PolicyCtrl;
 });

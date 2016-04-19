@@ -22,9 +22,9 @@ define([], function () {
          * Fills ElementPolicyList with data
          * @param elementPolicyListData {Array} Array of Element Policy items from server
          */
-        function setData (elementPolicyListData){
+        function setData (elementPolicyListData, pathBundleId){
             elementPolicyListData.forEach(function(elementPolicyData) {
-                self.data.push(ElementPolicyService.createElementPolicy(elementPolicyData));
+                self.data.push(ElementPolicyService.createElementPolicy(elementPolicyData, pathBundleId));
             });
         }
 

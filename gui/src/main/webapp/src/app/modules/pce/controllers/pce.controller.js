@@ -2,10 +2,13 @@ define(['app/modules/pce/services/pce.service'], function () {
 
     'use strict';
 
-    function PceCtrl($rootScope, $scope, $routeParams, NetworkService, NextTopologyService, PceService) {
+    function PceCtrl($rootScope, $scope, $routeParams, NetworkService, NextTopologyService, PceMenuService, PceService, LinksService) {
         // scope properties
+        $scope.mainMenu = [];
         $scope.page = 'topology';
         $scope.sidePanelPage = null;
+        $scope.sidePanelCbk = null;
+        $scope.viewPath = 'app/modules/pce/views/';
 
         // scope topo params
         $scope.topologyData = { nodes: [], links: []};
@@ -29,23 +32,35 @@ define(['app/modules/pce/services/pce.service'], function () {
         $scope.hideProgressBar = hideProgressBar;
         $scope.openSidePanel = openSidePanel;
         $scope.showProgressBar = showProgressBar;
+        $scope.updateTopologyData = updateTopologyData;
 
         // progressbar
         $scope.showProgressLine = false;
 
+        loadMainMenu();
 
         // local variables
-        var existingPages = ['topology', 'flow-management', 'statistics', 'notifications', 'configuration', 'bgp-routes'];
         var existingSidePanels = ['side_panel_nodes', 'side_panel_links', 'side_panel_policy', 'side_panel_flow_detail'];
-
-        // set current page
-        if(existingPages.indexOf($routeParams.page)!==-1){
-            $scope.page = $routeParams.page;
-        }
 
         function broadcastFromRoot(eventName, val) {
             $scope.$broadcast(eventName, val);
         }
+
+        /**
+         * Loads main menu and sets current page, if existing
+         */
+        function loadMainMenu(){
+            PceMenuService.loadMainMenu().then(function(menuData){
+                $scope.mainMenu = PceMenuService.createPceMenu(menuData.data);
+                if($scope.mainMenu.pageExists($routeParams.page)){
+                    $scope.page = $routeParams.page;
+                    $scope.mainMenu.setActivePage($scope.page);
+                }else{
+                    console.error('Not existins page', $routeParams.page);
+                }
+            });
+        }
+
 
         /**
          * Closes side panel
@@ -61,10 +76,16 @@ define(['app/modules/pce/services/pce.service'], function () {
          * Opens side panel and loads appropriate template file
          * @param page {string} page name
          */
-        function openSidePanel(page, object) {
+        function openSidePanel(page, object, cbk) {
+            var samePage = page === $scope.sidePanelPage;
+
+            $scope.sidePanelCbk = cbk;
             $scope.sidePanelPage = page;
             $scope.sidePanelObject = object;
 
+            if ( samePage &&  $scope.sidePanelCbk) {
+                $scope.sidePanelCbk();
+            }
         }
 
         /**
@@ -73,7 +94,7 @@ define(['app/modules/pce/services/pce.service'], function () {
          */
         $scope.loadTopologyData = function (successCbk) {
             //reset nx dictionaries
-            setNewNxDict();
+            $scope.nxDict = setNewNxDict();
             //get data from controller and create network object with wraping
             NetworkService.getNetwork(function(networkObj){
                 var rawTopoData = {
@@ -93,8 +114,11 @@ define(['app/modules/pce/services/pce.service'], function () {
                 //console.debug('topoData', $scope.topologyData);
                 $scope.networkData = networkObj.data;
                 $scope.networkObj = networkObj;
+                $scope.networkObj.data.connections = LinksService.processLinks($scope.networkData, $scope.nxDict, $scope.topologyData);
 
                 $scope.topologyLoaded = true;
+
+
 
                 if ( successCbk ) {
                     successCbk($scope.topologyData, $scope.nxDict);
@@ -123,24 +147,41 @@ define(['app/modules/pce/services/pce.service'], function () {
          * Utils - reset nx links and nodes dictionaries
          */
         function setNewNxDict(){
-            $scope.nxDict = {
+            return {
                 nodes: new nx.data.Dictionary({}),
                 links: new nx.data.Dictionary({})
             };
         }
 
+        function updateTopologyData(nxTopoColors){
+            NetworkService.updateTopologyStatuses($scope.nxTopology, $scope.nxDict, $scope.networkObj, setNewNxDict(), nxTopoColors, function () {
+
+                if ( $scope.sidePanelPage ){
+                    var refreshFunc = {
+                        'side_panel_links': function(){
+                            $scope.$broadcast('CONN_CHECK_SEL_LINK');
+                        }
+                    };
+
+                    if ( refreshFunc[$scope.sidePanelPage] ){
+                        refreshFunc[$scope.sidePanelPage]();
+                    }
+                }
+
+            });
+        }
+
         /**
          * Convert decimal to hexadecimal
-         * @param decVal
+         * @param decVal {string, number}
          */
         $scope.decToHex = function(decVal) {
             return PceService.convertDecToHex(decVal);
         };
-
     }
     
 
-    PceCtrl.$inject=['$rootScope' ,'$scope', '$routeParams', 'NetworkService', 'NextTopologyService', 'PceService'];
+    PceCtrl.$inject=['$rootScope' ,'$scope', '$routeParams', 'NetworkService', 'NextTopologyService', 'PceMenuService', 'PceService', 'LinksService'];
 
     return PceCtrl;
 });

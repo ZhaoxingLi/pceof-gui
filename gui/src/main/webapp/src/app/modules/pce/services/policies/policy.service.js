@@ -1,7 +1,7 @@
 define([], function () {
     'use strict';
 
-    function PolicyService(PathBundleListService, PolicyModel, Restangular) {
+    function PolicyService(PolicyModel, Restangular) {
         this.createPolicy = createPolicy;
 
 
@@ -22,6 +22,8 @@ define([], function () {
             }
 
             obj.deletePolicy = deletePolicy;
+            obj.getAllElementPolicies = getAllElementPolicies;
+            obj.getAllSegmentPolicies = getAllSegmentPolicies;
             obj.getPolicy = getPolicy;
             obj.putPolicy = putPolicy;
 
@@ -52,7 +54,7 @@ define([], function () {
             var self = this;
 
             var restObj = Restangular.one('restconf').one('operational').one('ofl3-policy:ofl3-policies')
-                .one('policy').one(policyId);
+                .one('policy').one(self.data['policy-id'] || policyId);
 
             return restObj.get().then(function(data) {
                 self.setData(data.policy[0]);
@@ -67,7 +69,8 @@ define([], function () {
          */
         function putPolicy(successCallback, errorCallback) {
             /*jshint validthis:true */
-            var self = this;
+            var self = {};
+            angular.copy(this, self);
 
             // PathBundleList converted to simple array of path bundles for putting into data store
             if(self.data['path-bundle']) {
@@ -91,9 +94,41 @@ define([], function () {
                 errorCallback(errData);
             });
         }
+
+        function getAllElementPolicies() {
+            /*jshint validthis:true */
+            var retval = [];
+
+            this.data['path-bundle'].data.forEach(function(pb) {
+                if(pb.data.constraints && pb.data.constraints['element-policy'] && pb.data.constraints['element-policy'].data) {
+                    pb.data.constraints['element-policy'].data.forEach(function(ep) {
+                        retval.push(ep);
+                    });
+                }
+
+            });
+
+            return retval;
+        }
+
+        function getAllSegmentPolicies() {
+            /*jshint validthis:true */
+            var retval = [];
+
+            this.data['path-bundle'].data.forEach(function(pb) {
+                if(pb.data.constraints && pb.data.constraints['segment-policy'] && pb.data.constraints['segment-policy'].data) {
+                    pb.data.constraints['segment-policy'].data.forEach(function(sp) {
+                        retval.push(sp);
+                    });
+                }
+
+            });
+
+            return retval;
+        }
     }
 
-    PolicyService.$inject=['PathBundleListService', 'PolicyModel', 'Restangular'];
+    PolicyService.$inject=['PolicyModel', 'Restangular'];
 
     return PolicyService;
 

@@ -2,7 +2,7 @@ define([''], function () {
 
     'use strict';
 
-    function TopologyCtrl($rootScope, $scope, NextTopologyService) {
+    function TopologyCtrl($rootScope, $scope, constants) {
 
         $scope.init = init;
         $scope.reloadTopo = reloadTopo;
@@ -14,7 +14,12 @@ define([''], function () {
          */
         $scope.cbkFunctions = {
             clickNode: function(node){
-                console.log('click node event', node);
+
+                $scope.openSidePanel('side_panel_nodes', null, function () {
+                    $scope.broadcastFromRoot('SELECT_NODE', node);
+                });
+                $scope.$apply();
+
                 //Example of highlighting
                 //NextTopologyService.highlightNode($scope.nxTopology, 1);
                 //NextTopologyService.highlightNode($scope.nxTopology, 1, true); without links around
@@ -26,7 +31,21 @@ define([''], function () {
                 //NextTopologyService.fadeInAllLayers();
             },
             clickLink: function(link){
-                console.log('click link event', link);
+                $scope.openSidePanel('side_panel_links', null, function () {
+                    $scope.broadcastFromRoot('SELECT_CONNECTION', link);
+                });
+                $scope.$apply();
+            },
+            topologyGenerated: function(){
+
+                if ( $rootScope.updateTopoInterval ) {
+                    clearInterval($rootScope.updateTopoInterval);
+                }
+
+                $rootScope.updateTopoInterval = setInterval(function () {
+                    $scope.updateTopologyData($scope.nxTopoColors);
+                },constants.updateTopoInterval);
+
             }
         };
 
@@ -59,7 +78,7 @@ define([''], function () {
         });
     }
 
-    TopologyCtrl.$inject=['$rootScope', '$scope', 'NextTopologyService'];
+    TopologyCtrl.$inject=['$rootScope', '$scope', 'constants'];
 
     return TopologyCtrl;
 });
