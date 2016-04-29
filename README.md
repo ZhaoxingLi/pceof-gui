@@ -121,7 +121,6 @@ Parameters for the controller
 
 - Policy-based Traffic Engineering for Openflow Networks
 - Developed for ODL
-- 
 - Built using open software including Java, NeXt and AngularJS among others
 - Simple WEB browser GUI for topology visuzation and interactive policy management/programming
 - Detailed stats collection
