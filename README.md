@@ -71,7 +71,7 @@ Figure 2 belows shows the PCE-OF GUI "landing page".
 ![](https://raw.githubusercontent.com/CiscoDevNet/pceof-gui/master/screenshots/topology-active.png)
 *Figure 2. PCE-OF GUI*
 
-There is a 10min video of PCE-Openflow in action located [here](https://www.youtube.com/watch?v=hRDKgn_zd4g). What follows is a brief explanation of the important GUI functions.
+There is a 10min video of PCE-Openflow in action located [here](https://www.youtube.com/watch?v=hRDKgn_zd4g). What follows is a brief description of the important PCE-OF functions presented in the GUI.
 
 #### Topology
 
