@@ -117,7 +117,7 @@ Several sub-functions including:
 
 Parameters for the controller
 
-### Feature Summary:
+## Feature Summary:
 
 - Policy-based Traffic Engineering for Openflow Networks
 - Developed for ODL
@@ -126,11 +126,11 @@ Parameters for the controller
 - Detailed stats collection
 - Flexible policy configuration including constraint-based path computation and programming based source/destion IP address, ports and BGP prefixes
 
-### Installation Instructions
+## Installation Instructions
 
 to be added
 
-### References
+## References
 
 - [https://wiki.opendaylight.org](https://wiki.opendaylight.org)
 
