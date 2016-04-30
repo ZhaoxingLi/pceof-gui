@@ -3,7 +3,7 @@
 OpenDaylight (ODL) is an open source application development and delivery platform (also referred to in some circles as a controller). Openflow is a protocol for
 programming flow tables on switches. PCE-Openflow (PCE-OF) is a new ODL application that applies policy-based path computation and programming thus providing a level of "smart" traffic engineering to openflow networks. 
 
-## Team:
+## Team
 
 - Jan Medved
 - Daniel Malachovsky
@@ -17,25 +17,25 @@ programming flow tables on switches. PCE-Openflow (PCE-OF) is a new ODL applicat
 - Andrej Vanko
 - Giorgi Guliashvili
 
-### Project Link:
+### Project Link
 
 [PCE-OF Project](https://github.com/CiscoDevNet/pceof-gui). 
 
 Note: This release provides the PCE-OF GUI source code as a reference app. Subsequent releases over the next few months include ODL + network instance in dcloud so that interested user can run app. The entire package will soon be released to the open source community.
 
-### Social Tags:
+### Social Tags
 
-SDN, Opendaylight, Open Source, NeXt, Openflow, Path Computation Engine, PCE, Policy, RESTCONF, YANG, Topology, BGP
+SDN, Opendaylight, Open Source, NeXt, Openflow, Path Computation Element, PCE, Policy, RESTCONF, YANG, Topology, BGP
 
-### Project Kick-off Date:
+### Project Kick-off Date
 
 November 2015
 
-### Current Status:
+### Current Status
 
 Complete
 
-## Application Overview:
+## Application Overview
 
 Early incarnations of software defined networking (SDN) involved control and data plane separation. SDN has evolved where the control plane can be expressed
 by applications using APIs to talk to a controller - the controller then talking to one or more network elements using different protocols. This model enables applications to play a major role in network management and operations.
@@ -73,37 +73,37 @@ Figure 2 belows shows the PCE-OF GUI "landing page".
 
 There is a 10min video of PCE-Openflow in action located [here](https://www.youtube.com/watch?v=hRDKgn_zd4g). What follows is a brief description of the important PCE-OF functions presented in the GUI.
 
-#### Topology
+### Topology
 
 Renders a view of the OF network topology composed of nodes (OF switches and any attached hosts, switches or routers) and connections. The topology view reacts to network operations and events and provides interfactions with other features. In the example above switches are labeled FB (forwarding boxes).
 
-#### Nodes
+### Nodes
 
 Information on switches, routers and hosts including status, list of ports and connected links.
 
-#### Connections
+### Connections
 
 Information on connections between nodes. A connection could be a bundle composed of one or more physical links. Selecting a connection from the panel will highlight it on the topology and vice-versa.
 
-#### Policy
+### Policy
 
 Two options here: config and operational. Config enables the operator to add new polices or modified existing policies. After the policies are configured they are deployed into the network and become operational.
 
 Operational shows policies deployed in the network. Paths defined and deployed based on policy can be and selected and then overlaid onto the topology view.
 
-#### Flows
+### Flows
 
 Shows OF switch properties and stats counters. Also shows details on flows table entries inside an OF switch.
 
-#### Address Mappings
+### Address Mappings
 
 Shows table of the discovered node's IP and MAC addresses.
 
-#### BGP Routes
+### BGP Routes
 
 Prefixes, next_hops and VRFs learned from attached BGP routers.
 
-#### Utilization
+### Utilization
 
 Several sub-functions including:
 
@@ -113,11 +113,11 @@ Several sub-functions including:
 
 - Statistics. Link stats based on registration, display individual or aggregate utilization in % or bits per second (bps). Flow stats for individual, table aggregates for installed flows. Per-switch port stats includding transferred data, packets, errors, etc. And finally openflow stats for queue, meter and groups.
 
-#### Configuration
+### Configuration
 
 Parameters for the controller
 
-## Feature Summary:
+## Feature Summary
 
 - Policy-based Traffic Engineering for Openflow Networks
 - Developed for ODL
@@ -128,7 +128,33 @@ Parameters for the controller
 
 ## Installation Instructions
 
-to be added
+Note: this package provides GUI only. Interested users to expect release over a few months following May '16.
+
+### Download the code
+
+To download the code, use GitHub's web-interface at: https://github.com/CiscoDevNet/pceof-gui,
+
+or download using [Git](https://git-scm.com):
+
+```
+git clone https://github.com/CiscoDevNet/pceof-gui.git
+```
+
+### Run the GUI
+
+When this is done, run the commands subsequently:
+
+```
+npm install
+```
+
+This should download all missing packages.
+
+```
+bower
+```
+
+And this should compile the code and run a web server.
 
 ## References
 
