@@ -142,19 +142,18 @@ git clone https://github.com/CiscoDevNet/pceof-gui.git
 
 ### Run the GUI
 
-When this is done, run the commands subsequently:
+When this is done,
+1. navigate to the web-application folder;
+2. download and install all missing packages;
+3. compile the code and run a web server.
 
 ```
+cd gui/src/main/webapp/
+...
 npm install
-```
-
-This should download all missing packages.
-
-```
+...
 bower
 ```
-
-And this should compile the code and run a web server.
 
 ## References
 
