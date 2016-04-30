@@ -130,6 +130,8 @@ Parameters for the controller
 
 Note: this package provides GUI only. Interested users to expect release over a few months following May '16.
 
+For the installation process you will need to install the following CLI utilities: [Git](https://git-scm.com), [Bower](http://bower.io), [npm](https://www.npmjs.com).
+
 ### Download the code
 
 To download the code, use GitHub's web-interface at: https://github.com/CiscoDevNet/pceof-gui,
